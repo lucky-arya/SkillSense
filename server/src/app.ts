@@ -23,6 +23,7 @@ import assessmentRoutes from './routes/assessment.routes';
 import roleRoutes from './routes/role.routes';
 import gapAnalysisRoutes from './routes/gapAnalysis.routes';
 import recommendationRoutes from './routes/recommendation.routes';
+import aiRoutes from './routes/ai.routes';
 
 const app: Application = express();
 
@@ -59,8 +60,8 @@ app.use(limiter);
 // Body Parsing & Logging
 // ===========================================
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Request logging (skip in test environment)
 if (config.nodeEnv !== 'test') {
@@ -86,6 +87,7 @@ app.use(`${apiPrefix}/assessments`, assessmentRoutes);
 app.use(`${apiPrefix}/roles`, roleRoutes);
 app.use(`${apiPrefix}/gap-analysis`, gapAnalysisRoutes);
 app.use(`${apiPrefix}/recommendations`, recommendationRoutes);
+app.use(`${apiPrefix}/ai`, aiRoutes);
 
 // ===========================================
 // Error Handling

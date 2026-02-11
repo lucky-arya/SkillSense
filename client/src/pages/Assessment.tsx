@@ -132,7 +132,7 @@ export default function Assessment() {
         {/* Progress Header */}
         <Card>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">{selectedAssessment.title}</h2>
+            <h2 className="text-lg font-semibold text-gray-100">{selectedAssessment.title}</h2>
             <Badge variant="primary">
               Question {currentQuestionIndex + 1} of {selectedAssessment.questions.length}
             </Badge>
@@ -142,7 +142,7 @@ export default function Assessment() {
 
         {/* Question Card */}
         <Card className="min-h-[300px]">
-          <h3 className="text-xl font-medium text-gray-900 mb-6">{question.text}</h3>
+          <h3 className="text-xl font-medium text-gray-100 mb-6">{question.text}</h3>
 
           {question.type === 'multiple-choice' && question.options && (
             <div className="space-y-3">
@@ -152,8 +152,8 @@ export default function Assessment() {
                   onClick={() => handleAnswer(option)}
                   className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
                     currentAnswer === option
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      ? 'border-primary-500 bg-primary-900/30 text-primary-300'
+                      : 'border-slate-700 hover:border-slate-600 hover:bg-slate-800 text-gray-300'
                   }`}
                 >
                   <span className="font-medium">{String.fromCharCode(65 + index)}.</span> {option}
@@ -164,7 +164,7 @@ export default function Assessment() {
 
           {question.type === 'rating' && (
             <div className="space-y-4">
-              <p className="text-gray-600">Select your proficiency level:</p>
+              <p className="text-gray-400">Select your proficiency level:</p>
               <div className="flex justify-between gap-2">
                 {[1, 2, 3, 4, 5].map((level) => (
                   <button
@@ -172,12 +172,12 @@ export default function Assessment() {
                     onClick={() => handleAnswer(level)}
                     className={`flex-1 py-4 px-2 rounded-lg border-2 transition-all ${
                       currentAnswer === level
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        ? 'border-primary-500 bg-primary-900/30 text-primary-300'
+                        : 'border-slate-700 hover:border-slate-600 hover:bg-slate-800 text-gray-300'
                     }`}
                   >
                     <div className="text-2xl font-bold">{level}</div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-400 mt-1">
                       {level === 1
                         ? 'Beginner'
                         : level === 2
@@ -230,8 +230,8 @@ export default function Assessment() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Skill Assessments</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-gray-100">Skill Assessments</h1>
+        <p className="text-gray-400 mt-1">
           Take assessments to evaluate your current skill levels
         </p>
       </div>
@@ -240,14 +240,14 @@ export default function Assessment() {
         {assessments.map((assessment) => (
           <Card key={assessment._id} hover>
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">{assessment.title}</h3>
-              <div className="flex items-center text-gray-500 text-sm">
+              <h3 className="text-lg font-semibold text-gray-100">{assessment.title}</h3>
+              <div className="flex items-center text-gray-400 text-sm">
                 <Clock size={16} className="mr-1" />
                 {assessment.estimatedTime} min
               </div>
             </div>
 
-            <p className="text-gray-600 mb-4">{assessment.description}</p>
+            <p className="text-gray-400 mb-4">{assessment.description}</p>
 
             <div className="flex flex-wrap gap-2 mb-6">
               {assessment.skillsAssessed.map((skill) => (

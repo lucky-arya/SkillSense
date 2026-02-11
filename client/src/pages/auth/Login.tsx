@@ -27,7 +27,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -35,14 +35,14 @@ export default function Login() {
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">SS</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">SkillSense</span>
+            <span className="text-2xl font-bold text-gray-100">SkillSense</span>
           </Link>
         </div>
 
         {/* Card */}
         <div className="card">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">Welcome Back</h1>
-          <p className="text-gray-600 text-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-100 text-center mb-2">Welcome Back</h1>
+          <p className="text-gray-400 text-center mb-6">
             Sign in to continue your skill journey
           </p>
 
@@ -73,10 +73,10 @@ export default function Login() {
 
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center">
-                <input type="checkbox" className="rounded border-gray-300 text-primary-600 mr-2" />
-                <span className="text-gray-600">Remember me</span>
+                <input type="checkbox" className="rounded border-slate-600 bg-slate-800 text-primary-600 mr-2" />
+                <span className="text-gray-400">Remember me</span>
               </label>
-              <Link to="/forgot-password" className="text-primary-600 hover:text-primary-700">
+              <Link to="/forgot-password" className="text-primary-400 hover:text-primary-300">
                 Forgot password?
               </Link>
             </div>
@@ -86,9 +86,9 @@ export default function Login() {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-gray-600 text-sm">
+          <p className="mt-6 text-center text-gray-400 text-sm">
             Don't have an account?{' '}
-            <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link to="/register" className="text-primary-400 hover:text-primary-300 font-medium">
               Sign up
             </Link>
           </p>

@@ -27,20 +27,20 @@ export default function ForgotPassword() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-4">
+        <div className="max-w-md w-full bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-8 text-center">
+          <div className="w-16 h-16 bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Check your email</h2>
-          <p className="text-slate-600 mb-6">
-            If an account exists for <strong>{email}</strong>, we've sent password reset instructions.
+          <h2 className="text-2xl font-bold text-gray-100 mb-2">Check your email</h2>
+          <p className="text-gray-400 mb-6">
+            If an account exists for <strong className="text-gray-200">{email}</strong>, we've sent password reset instructions.
           </p>
           <Link
             to="/login"
-            className="text-primary-600 hover:text-primary-700 font-medium"
+            className="text-primary-400 hover:text-primary-300 font-medium"
           >
             &larr; Back to login
           </Link>
@@ -50,11 +50,11 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-4">
+      <div className="max-w-md w-full bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Reset Password</h1>
-          <p className="text-slate-500 mt-2">
+          <h1 className="text-3xl font-bold text-gray-100">Reset Password</h1>
+          <p className="text-gray-400 mt-2">
             Enter your email and we'll send you reset instructions
           </p>
         </div>
@@ -79,9 +79,9 @@ export default function ForgotPassword() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-gray-400 mt-6">
           Remember your password?{' '}
-          <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+          <Link to="/login" className="text-primary-400 hover:text-primary-300 font-medium">
             Sign in
           </Link>
         </p>

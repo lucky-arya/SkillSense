@@ -89,8 +89,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Track your skill development progress</p>
+          <h1 className="text-2xl font-bold text-gray-100">Dashboard</h1>
+          <p className="text-gray-400 mt-1">Track your skill development progress</p>
         </div>
         <Link to="/assessment">
           <Button>
@@ -155,13 +155,13 @@ export default function Dashboard() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Skill Radar Chart */}
         <Card>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skill Overview</h3>
+          <h3 className="text-lg font-semibold text-gray-100 mb-4">Skill Overview</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={skillRadarData}>
-                <PolarGrid stroke="#e5e7eb" />
-                <PolarAngleAxis dataKey="skill" tick={{ fill: '#6b7280', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
+                <PolarGrid stroke="#334155" />
+                <PolarAngleAxis dataKey="skill" tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} />
                 <Radar
                   name="Current Level"
                   dataKey="current"
@@ -182,11 +182,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-primary-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Current</span>
+              <span className="text-sm text-gray-400">Current</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-secondary-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Required</span>
+              <span className="text-sm text-gray-400">Required</span>
             </div>
           </div>
         </Card>
@@ -194,16 +194,16 @@ export default function Dashboard() {
         {/* Top Skills Gaps */}
         <Card>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Priority Gaps</h3>
-            <Link to="/gap-analysis" className="text-sm text-primary-600 hover:text-primary-700">
+            <h3 className="text-lg font-semibold text-gray-100">Priority Gaps</h3>
+            <Link to="/gap-analysis" className="text-sm text-primary-400 hover:text-primary-300">
               View All
             </Link>
           </div>
           <div className="space-y-4">
             {topGaps.map((gap) => (
-              <div key={gap.skill} className="p-4 bg-gray-50 rounded-lg">
+              <div key={gap.skill} className="p-4 bg-slate-800 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-gray-900">{gap.skill}</span>
+                  <span className="font-medium text-gray-200">{gap.skill}</span>
                   <Badge
                     variant={
                       gap.priority === 'critical'
@@ -217,7 +217,7 @@ export default function Dashboard() {
                   </Badge>
                 </div>
                 <ProgressBar value={100 - gap.gap} color="danger" size="sm" />
-                <p className="text-sm text-gray-500 mt-2">Gap: {gap.gap} points to close</p>
+                <p className="text-sm text-gray-400 mt-2">Gap: {gap.gap} points to close</p>
               </div>
             ))}
           </div>
@@ -231,37 +231,37 @@ export default function Dashboard() {
 
       {/* Recent Activity / Empty State */}
       <Card>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-gray-100 mb-4">
           {analysis ? 'Analysis Summary' : 'Get Started'}
         </h3>
         {analysis ? (
           <div className="space-y-3">
             {analysis.strengths && analysis.strengths.length > 0 && (
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-green-900/30 rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
-                    <CheckCircle size={16} className="text-green-600" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-900/50">
+                    <CheckCircle size={16} className="text-green-400" />
                   </div>
-                  <span className="text-gray-900">
+                  <span className="text-gray-200">
                     <strong>{analysis.strengths.length}</strong> skills exceed role requirements
                   </span>
                 </div>
               </div>
             )}
             {analysis.recommendations && analysis.recommendations.map((rec, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-primary-100">
-                    <ArrowRight size={16} className="text-primary-600" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-primary-900/50">
+                    <ArrowRight size={16} className="text-primary-400" />
                   </div>
-                  <span className="text-gray-900 text-sm">{rec}</span>
+                  <span className="text-gray-300 text-sm">{rec}</span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">
+            <p className="text-gray-400 mb-4">
               Take an assessment to see your skill analysis here
             </p>
             <Link to="/assessment">

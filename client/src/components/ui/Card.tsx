@@ -24,10 +24,10 @@ export default function Card({
   return (
     <div
       className={clsx(
-        'bg-white rounded-xl shadow-sm border border-gray-100',
+        'bg-slate-900 rounded-xl shadow-sm border border-slate-800',
         paddingStyles[padding],
         {
-          'hover:shadow-md hover:border-gray-200 transition-all duration-200': hover,
+          'hover:shadow-md hover:border-slate-700 transition-all duration-200': hover,
         },
         className
       )}

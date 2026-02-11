@@ -10,6 +10,10 @@ import Assessment from './pages/Assessment';
 import GapAnalysis from './pages/GapAnalysis';
 import Recommendations from './pages/Recommendations';
 import Profile from './pages/Profile';
+import ResumeAnalyzer from './pages/ResumeAnalyzer';
+import MockInterview from './pages/MockInterview';
+import CareerRoadmap from './pages/CareerRoadmap';
+import AIChat from './pages/AIChat';
 import NotFound from './pages/NotFound';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -117,6 +121,48 @@ export default function App() {
           <PrivateRoute>
             <Layout>
               <Profile />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* AI-Powered Features */}
+      <Route
+        path="/resume-analyzer"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <ResumeAnalyzer />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/mock-interview"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <MockInterview />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/career-roadmap"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <CareerRoadmap />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/ai-chat"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <AIChat />
             </Layout>
           </PrivateRoute>
         }

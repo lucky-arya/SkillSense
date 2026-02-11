@@ -22,8 +22,8 @@ export default function Register() {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
       return;
     }
 
@@ -40,7 +40,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary-50 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -48,14 +48,14 @@ export default function Register() {
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">SS</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">SkillSense</span>
+            <span className="text-2xl font-bold text-gray-100">SkillSense</span>
           </Link>
         </div>
 
         {/* Card */}
         <div className="card">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">Create Account</h1>
-          <p className="text-gray-600 text-center mb-6">Start your skill assessment journey</p>
+          <h1 className="text-2xl font-bold text-gray-100 text-center mb-2">Create Account</h1>
+          <p className="text-gray-400 text-center mb-6">Start your skill assessment journey</p>
 
           {error && (
             <div className="mb-4">
@@ -88,7 +88,7 @@ export default function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Create a password"
-              helperText="At least 6 characters"
+              helperText="At least 8 characters"
               required
             />
 
@@ -106,9 +106,9 @@ export default function Register() {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-gray-600 text-sm">
+          <p className="mt-6 text-center text-gray-400 text-sm">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link to="/login" className="text-primary-400 hover:text-primary-300 font-medium">
               Sign in
             </Link>
           </p>

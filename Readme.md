@@ -1,64 +1,143 @@
-# SkillSense AI
+# SkillSense AI 🧠
 
-> Personalized Skill Gap Self-Diagnosis Tool for Students
+> **AI-Powered Career Intelligence Platform** — Diagnose skill gaps, ace interviews, and land your dream role.
 
-[![Theme](https://img.shields.io/badge/Theme-Skill%20Intelligence-blue)]()
-[![Stack](https://img.shields.io/badge/Stack-React%20%7C%20Node%20%7C%20Python%20ML-green)]()
+[![Stack](https://img.shields.io/badge/React-18-61DAFB?logo=react)]()
+[![Stack](https://img.shields.io/badge/Express-4-000000?logo=express)]()
+[![Stack](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi)]()
+[![Stack](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb)]()
+[![AI](https://img.shields.io/badge/Google%20Gemini-AI-4285F4?logo=google)]()
+[![Stack](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)]()
 
-## 🎯 Problem Statement
+---
 
-Students often struggle to identify the gap between their current skills and the requirements of their target career. SkillSense AI provides an intelligent, personalized diagnosis that:
+## ✨ What Makes SkillSense Different
 
-1. **Assesses** current skill proficiency through adaptive questioning
-2. **Analyzes** skill gaps against target roles using ML
-3. **Recommends** personalized learning paths with priority ranking
+| | SkillSense AI | Typical Resume Tools |
+|--|---|---|
+| **Architecture** | 3 microservices (Express + FastAPI + React) | Monolithic app |
+| **AI** | Google Gemini 2.0 Flash + custom ML engine | Single API calls |
+| **Resume Analysis** | ATS scoring + roast mode + keyword extraction | Basic review |
+| **Mock Interviews** | Voice-enabled AI interviews with TTS/STT | Text-only or none |
+| **Career Roadmap** | Personalized phased timeline with projects & resources | Generic advice |
+| **Skill Analysis** | ML-powered gap detection across 17 categories, 5+ roles | Self-reported |
+| **Deployment** | Docker Compose → one command | Manual setup |
+| **Testing** | 34 automated tests (Jest + pytest) | None |
+
+---
+
+## 🎯 Core Features
+
+### 📊 Skill Assessment & Gap Analysis
+- Adaptive questionnaire engine with real-time scoring
+- ML-powered gap detection (weighted scoring + calibration)
+- Visual radar charts and progress tracking
+- Persisted results in MongoDB with history and trends
+
+### 📄 AI Resume Analyzer
+- **Rank Mode**: ATS compatibility score (0-100), strength/weakness breakdown, missing keyword detection
+- **Roast Mode 🔥**: Brutally honest AI roasts with meme verdicts and improvement tips
+- Drag-and-drop PDF/TXT upload with pdf-parse text extraction
+
+### 🎤 AI Mock Interview
+- Voice-enabled interviews using Web Speech API (STT) + SpeechSynthesis (TTS)
+- Dynamic question generation based on role, difficulty, and focus area
+- Real-time chat UI with typing indicators
+- Comprehensive evaluation: Technical, Communication, Soft Skills scores + question-by-question feedback
+
+### 🗺️ AI Career Roadmap
+- Personalized phased learning timeline (Beginner → Expert)
+- Each phase includes: skills to learn, projects to build, resources, milestones
+- Interactive expandable timeline visualization
+- Adapts to current skills and experience level
+
+### 🤖 AI Career Coach (Chat)
+- Persistent conversation with Gemini AI
+- Markdown-rendered responses
+- Quick action buttons for common career queries
+- Context-aware career guidance
+
+### 📈 Dashboard & Recommendations
+- Skill progress dashboard with Recharts visualizations
+- ML-curated learning resource recommendations across 17 skill categories
+- Target role mapping for 5+ career paths
+
+---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   React + TW    │────▶│  Node/Express   │────▶│  Python ML      │
-│   Frontend      │◀────│  Backend API    │◀────│  Service        │
-└─────────────────┘     └────────┬────────┘     └─────────────────┘
-                                 │
-                        ┌────────▼────────┐
-                        │    MongoDB      │
-                        │   (Mongoose)    │
-                        └─────────────────┘
+┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
+│   React 18 + TW   │────▶│  Express + TS     │────▶│  FastAPI (Python) │
+│   Vite + Framer   │◀────│  Gemini AI SDK    │◀────│  ML Engine        │
+│   Radix UI        │     │  Multer + PDF     │     │  5 Roles / 17 Cat │
+└───────────────────┘     └────────┬──────────┘     └───────────────────┘
+     Port 5173                     │ Port 5000           Port 8000
+                          ┌────────▼──────────┐
+                          │    MongoDB 7      │
+                          │   (Mongoose ODM)  │
+                          └───────────────────┘
 ```
+
+### Tech Stack
+
+| Layer | Technologies |
+|-------|-------------|
+| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Framer Motion, Radix UI, Recharts, React Markdown |
+| **Backend** | Node.js, Express 4, TypeScript, Mongoose, Zod validation, JWT auth, Multer, pdf-parse |
+| **AI Engine** | Google Gemini 2.0 Flash (`@google/generative-ai`), structured JSON prompting |
+| **ML Service** | Python 3, FastAPI, scikit-learn, weighted scoring + collaborative filtering |
+| **Database** | MongoDB 7 with Mongoose ODM |
+| **DevOps** | Docker, docker-compose, nginx reverse proxy, npm workspaces |
+| **Testing** | Jest 30 (21 tests), pytest (13 tests) |
+
+---
 
 ## 📁 Project Structure
 
 ```
 skillsense/
-├── client/                 # React + Tailwind frontend
+├── client/                    # React frontend
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Route-level components
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── services/       # API client services
-│   │   ├── context/        # React context providers
-│   │   └── utils/          # Helper functions
-│   └── public/
-├── server/                 # Node.js + Express backend
+│   │   ├── pages/
+│   │   │   ├── Landing.tsx            # Dark-themed animated landing
+│   │   │   ├── Dashboard.tsx          # Skill progress dashboard
+│   │   │   ├── Assessment.tsx         # Adaptive skill assessment
+│   │   │   ├── GapAnalysis.tsx        # ML gap visualization
+│   │   │   ├── Recommendations.tsx    # Curated learning paths
+│   │   │   ├── ResumeAnalyzer.tsx     # AI resume rank + roast
+│   │   │   ├── MockInterview.tsx      # Voice-enabled AI interview
+│   │   │   ├── CareerRoadmap.tsx      # AI career timeline
+│   │   │   └── AIChat.tsx             # AI career coach chat
+│   │   ├── components/layout/         # Sidebar, Navbar, Layout
+│   │   ├── services/api/              # Typed API clients
+│   │   └── context/                   # Auth context
+│   └── Dockerfile
+├── server/                    # Express API + AI
 │   ├── src/
-│   │   ├── routes/         # Express route definitions
-│   │   ├── controllers/    # Request handlers
-│   │   ├── services/       # Business logic layer
-│   │   ├── models/         # Mongoose schemas
-│   │   ├── middleware/     # Express middleware
-│   │   └── utils/          # Helper utilities
-│   └── config/
-├── ml-service/             # Python ML microservice
-│   ├── app/
-│   │   ├── models/         # ML model definitions
-│   │   ├── services/       # Prediction services
-│   │   ├── routes/         # FastAPI routes
-│   │   └── utils/          # Data processing utilities
-│   ├── data/               # Training data & skill taxonomy
-│   └── notebooks/          # Jupyter notebooks for exploration
-└── shared/                 # Shared types & constants
+│   │   ├── routes/                    # REST routes (auth, skills, ai, etc.)
+│   │   ├── controllers/               # Request handlers
+│   │   ├── services/
+│   │   │   ├── ai.service.ts          # Gemini AI wrapper (8 methods)
+│   │   │   └── gapAnalysis.service.ts # ML bridge + MongoDB persistence
+│   │   ├── middleware/
+│   │   │   ├── auth.ts                # JWT authentication
+│   │   │   └── upload.ts              # Multer file upload
+│   │   ├── models/                    # Mongoose schemas
+│   │   └── __tests__/                 # Jest test suites
+│   └── Dockerfile
+├── ml-service/                # Python ML microservice
+│   ├── app/services/
+│   │   ├── gap_analyzer.py            # Weighted skill gap scoring
+│   │   └── recommender.py             # Learning resource recommender
+│   ├── tests/                         # pytest test suites
+│   └── Dockerfile
+├── shared/                    # Shared TypeScript types
+├── docker-compose.yml         # One-command deployment
+└── .env.example               # Environment template
 ```
+
+---
 
 ## 🚀 Quick Start
 
@@ -66,189 +145,128 @@ skillsense/
 - Node.js 18+
 - Python 3.10+
 - MongoDB (local or Atlas)
-- npm or yarn
+- Google Gemini API Key ([get one free](https://aistudio.google.com/apikey))
 
 ### Installation
 
 ```bash
-# 1. Clone the repository
-git clone <repo-url>
+# 1. Clone
+git clone https://github.com/lucky-arya/SkillSense.git
 cd SkillSense
 
-# 2. Copy environment file and configure
+# 2. Configure environment
 cp .env.example .env
-# Edit .env with your MongoDB URI and other settings
+# Edit .env — set MONGODB_URI, JWT_SECRET, GEMINI_API_KEY
 
-# 3. Install all dependencies (from root)
+# 3. Install all dependencies (npm workspaces)
 npm install
 
 # 4. Install Python dependencies
-cd ml-service
-pip install -r requirements.txt
-cd ..
+cd ml-service && pip install -r requirements.txt && cd ..
 
-# 5. Start all services in development mode
+# 5. Start all 3 services
 npm run dev
 ```
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
-
 ```env
-# Database
+# Required
 MONGODB_URI=mongodb://localhost:27017/skillsense
+JWT_SECRET=your-secret-key
+GEMINI_API_KEY=your-gemini-api-key        # ← NEW: powers all AI features
 
-# Server
-NODE_ENV=development
+# Optional
 PORT=5000
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRES_IN=7d
-
-# ML Service
 ML_SERVICE_URL=http://localhost:8000
-
-# Client
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000/api/v1
 ```
 
-### Running Services Individually
+### Running Individual Services
 
 ```bash
-# Frontend only (http://localhost:5173)
-npm run dev:client
-
-# Backend only (http://localhost:5000)
-npm run dev:server
-
-# ML Service only (http://localhost:8000)
-cd ml-service
-uvicorn app.main:app --reload --port 8000
+npm run dev:client    # Frontend → http://localhost:5173
+npm run dev:server    # Backend  → http://localhost:5000
+cd ml-service && uvicorn app.main:app --reload --port 8000  # ML → :8000
 ```
 
-### Database Seeding
+---
+
+## 🐳 Docker Deployment (One Command)
 
 ```bash
-# Seed the database with sample skills, roles, and assessments
-npm run seed
+# Set your Gemini API key
+export GEMINI_API_KEY=your-key-here
+
+# Launch everything
+docker compose up --build
+
+# Access:
+#   App      → http://localhost
+#   API      → http://localhost:5000
+#   ML       → http://localhost:8000
 ```
 
-## 🔬 ML Approach
-
-The skill gap analysis uses **explainable ML** over black-box models:
-
-| Component | Method | Why |
-|-----------|--------|-----|
-| Skill Proficiency | Weighted scoring + calibration | Interpretable scores |
-| Gap Analysis | Vector distance in skill space | Visual representation |
-| Recommendations | Collaborative filtering + rules | Combines data + domain knowledge |
-| Priority Ranking | Multi-criteria decision analysis | Transparent ranking factors |
-
-## 📊 Key Features
-
-- [x] Adaptive skill assessment questionnaire
-- [x] Real-time skill gap visualization
-- [x] Target role skill requirement mapping
-- [x] Personalized learning path generation
-- [x] Progress tracking dashboard
-- [x] JWT authentication
-- [x] Responsive UI with Tailwind CSS
+---
 
 ## 🔌 API Endpoints
 
 ### Authentication
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login user |
-| GET | `/api/auth/me` | Get current user |
+| POST | `/api/v1/auth/register` | Register new user |
+| POST | `/api/v1/auth/login` | Login |
+| GET | `/api/v1/auth/me` | Current user |
 
-### Skills
+### AI Features (🔒 Authenticated)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/skills` | Get all skills |
-| GET | `/api/skills/:id` | Get skill by ID |
-| GET | `/api/skills/category/:category` | Get skills by category |
+| POST | `/api/v1/ai/resume/analyze` | ATS score + analysis (PDF upload) |
+| POST | `/api/v1/ai/resume/roast` | Resume roast mode 🔥 (PDF upload) |
+| POST | `/api/v1/ai/resume/extract-skills` | Extract skills from resume |
+| POST | `/api/v1/ai/interview/start` | Generate interview questions |
+| POST | `/api/v1/ai/interview/evaluate-answer` | Evaluate single answer |
+| POST | `/api/v1/ai/interview/evaluate` | Full interview evaluation |
+| POST | `/api/v1/ai/roadmap/generate` | Generate career roadmap |
+| POST | `/api/v1/ai/chat` | AI career coach chat |
 
-### Assessments
+### Skills & Analysis
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/assessments` | Get available assessments |
-| POST | `/api/assessments/:id/start` | Start an assessment |
-| POST | `/api/assessments/:id/submit` | Submit assessment answers |
-| GET | `/api/assessments/results` | Get past results |
+| GET | `/api/v1/skills` | List all skills |
+| POST | `/api/v1/gap-analysis/analyze` | Run ML gap analysis |
+| GET | `/api/v1/gap-analysis/latest` | Latest analysis result |
+| GET | `/api/v1/recommendations` | ML learning recommendations |
 
-### Gap Analysis
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/gap-analysis/analyze` | Analyze skill gaps |
-| GET | `/api/gap-analysis/latest` | Get latest analysis |
-| GET | `/api/gap-analysis/history` | Get analysis history |
+---
 
-### Recommendations
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/recommendations` | Get learning recommendations |
-| GET | `/api/recommendations/skill/:id/resources` | Get resources for skill |
-
-## 🚢 Deployment
-
-### Docker Compose (Recommended)
+## 🧪 Testing
 
 ```bash
-# Start all services (MongoDB, backend, ML service, frontend)
-docker compose up --build
-
-# Access the app at http://localhost
-# API at http://localhost:5000
-# ML service at http://localhost:8000
-```
-
-### Frontend (Vercel)
-```bash
-cd client
-npm run build
-vercel deploy
-```
-
-### Backend (Render/Railway)
-```bash
-# Push to GitHub, connect to Render/Railway
-# Set environment variables in dashboard
-```
-
-### ML Service (Render/Railway)
-```bash
-# Deploy as Python web service
-# Entry point: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-```
-
-## 🛠️ Development
-
-### Tech Stack
-- **Frontend:** React 18, Tailwind CSS, Recharts, React Router
-- **Backend:** Node.js, Express.js, MongoDB, Mongoose
-- **ML Service:** Python, FastAPI, scikit-learn
-- **Auth:** JWT with bcrypt password hashing
-
-### Code Quality
-```bash
-# Lint frontend
-cd client && npm run lint
-
-# Lint backend
-cd server && npm run lint
-```
-
-### Testing
-```bash
-# Backend unit tests (Jest)
+# Backend tests (Jest — 21 tests)
 cd server && npm test
 
-# ML service tests (pytest)
+# ML service tests (pytest — 13 tests)
 cd ml-service && python -m pytest tests/ -v
+
+# All tests pass ✅
 ```
+
+---
+
+## 🔬 ML Approach
+
+| Component | Method | Why |
+|-----------|--------|-----|
+| Skill Proficiency | Weighted scoring + calibration | Interpretable scores |
+| Gap Analysis | Vector distance in skill space | Visual representation |
+| Recommendations | Collaborative filtering + rules | Data + domain knowledge |
+| Priority Ranking | Multi-criteria decision analysis | Transparent ranking |
+
+The ML service covers **5 target roles** (Frontend, Backend, Full Stack, Data Scientist, ML Engineer) across **17 skill categories** with individually tuned resource recommendations.
+
+---
 
 ## 📄 License
 
-MIT License - Built for SkillSense AIMIT License - Built for Hackathon
+MIT License — Built for Hackathon 🏆

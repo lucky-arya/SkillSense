@@ -108,8 +108,8 @@ export default function Recommendations() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Learning Recommendations</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-gray-100">Learning Recommendations</h1>
+        <p className="text-gray-400 mt-1">
           Personalized resources to help you close your skill gaps
         </p>
       </div>
@@ -149,7 +149,7 @@ export default function Recommendations() {
               {/* Skill Header */}
               <button
                 onClick={() => setExpandedSkill(isExpanded ? null : rec.skillId)}
-                className="w-full p-6 text-left hover:bg-gray-50 transition-colors"
+                className="w-full p-6 text-left hover:bg-slate-800 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -162,13 +162,13 @@ export default function Recommendations() {
                           : 'bg-yellow-100'
                       }`}
                     >
-                      <span className="text-xl font-bold text-gray-700">
+                      <span className="text-xl font-bold text-gray-400">
                         {rec.skillName.charAt(0)}
                       </span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-gray-100">
                           {rec.skillName}
                         </h3>
                         {rec.priority && (
@@ -185,7 +185,7 @@ export default function Recommendations() {
                         </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-400">
                         {completedInSkill}/{rec.resources.length} resources completed
                       </p>
                     </div>
@@ -193,8 +193,8 @@ export default function Recommendations() {
 
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm text-gray-500">Est. time</p>
-                      <p className="font-medium text-gray-900">{rec.estimatedTime}</p>
+                      <p className="text-sm text-gray-400">Est. time</p>
+                      <p className="font-medium text-gray-200">{rec.estimatedTime}</p>
                     </div>
                     {isExpanded ? (
                       <ChevronUp className="text-gray-400" />
@@ -207,10 +207,10 @@ export default function Recommendations() {
                 {/* Progress bar */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-500">
+                    <span className="text-gray-400">
                       Level {rec.currentLevel} → {rec.targetLevel}
                     </span>
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-gray-300 font-medium">
                       +{rec.targetLevel - rec.currentLevel} points needed
                     </span>
                   </div>
@@ -220,10 +220,10 @@ export default function Recommendations() {
 
               {/* Expanded Content */}
               {isExpanded && (
-                <div className="border-t border-gray-100 p-6 bg-gray-50">
-                  <p className="text-gray-600 mb-4">{rec.reason}</p>
+                <div className="border-t border-slate-700 p-6 bg-slate-800/50">
+                  <p className="text-gray-400 mb-4">{rec.reason}</p>
 
-                  <h4 className="font-medium text-gray-900 mb-3">Recommended Resources</h4>
+                  <h4 className="font-medium text-gray-100 mb-3">Recommended Resources</h4>
                   <div className="space-y-3">
                     {rec.resources.map((resource) => {
                       const Icon = getResourceIcon(resource.type);
@@ -232,8 +232,8 @@ export default function Recommendations() {
                       return (
                         <div
                           key={resource.id}
-                          className={`p-4 bg-white rounded-lg border ${
-                            isCompleted ? 'border-green-200 bg-green-50' : 'border-gray-200'
+                          className={`p-4 bg-slate-900 rounded-lg border ${
+                            isCompleted ? 'border-green-800 bg-green-900/20' : 'border-slate-700'
                           }`}
                         >
                           <div className="flex items-start justify-between">
@@ -251,8 +251,8 @@ export default function Recommendations() {
                                 />
                               </div>
                               <div>
-                                <h5 className="font-medium text-gray-900">{resource.title}</h5>
-                                <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                                <h5 className="font-medium text-gray-200">{resource.title}</h5>
+                                <div className="flex items-center gap-3 mt-1 text-sm text-gray-400">
                                   <span className="flex items-center gap-1">
                                     <Clock size={14} />
                                     {resource.duration}

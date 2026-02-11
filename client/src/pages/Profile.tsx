@@ -61,8 +61,8 @@ export default function Profile() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-        <p className="text-gray-600 mt-1">Manage your account and view your progress</p>
+        <h1 className="text-2xl font-bold text-gray-100">Profile</h1>
+        <p className="text-gray-400 mt-1">Manage your account and view your progress</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -101,8 +101,8 @@ export default function Profile() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-xl font-semibold text-gray-900">{user?.name}</h2>
-                  <p className="text-gray-500">{user?.email}</p>
+                  <h2 className="text-xl font-semibold text-gray-100">{user?.name}</h2>
+                  <p className="text-gray-400">{user?.email}</p>
                   <Button
                     variant="outline"
                     size="sm"
@@ -124,8 +124,8 @@ export default function Profile() {
                   <Target size={20} className="text-primary-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Target Role</p>
-                  <p className="font-medium text-gray-900">Set via Gap Analysis</p>
+                  <p className="text-sm text-gray-400">Target Role</p>
+                  <p className="font-medium text-gray-200">Set via Gap Analysis</p>
                 </div>
               </div>
 
@@ -134,8 +134,8 @@ export default function Profile() {
                   <Calendar size={20} className="text-secondary-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Member Since</p>
-                  <p className="font-medium text-gray-900">Recently Joined</p>
+                  <p className="text-sm text-gray-400">Member Since</p>
+                  <p className="font-medium text-gray-200">Recently Joined</p>
                 </div>
               </div>
             </div>
@@ -150,29 +150,29 @@ export default function Profile() {
               <p className="text-3xl font-bold text-primary-600">
                 {assessmentCount}
               </p>
-              <p className="text-sm text-gray-500">Assessments</p>
+              <p className="text-sm text-gray-400">Assessments</p>
             </Card>
             <Card className="text-center">
               <p className="text-3xl font-bold text-secondary-600">
                 {skills.length}
               </p>
-              <p className="text-sm text-gray-500">Skills Tracked</p>
+              <p className="text-sm text-gray-400">Skills Tracked</p>
             </Card>
             <Card className="text-center">
               <p className="text-3xl font-bold text-green-600">
                 {overallProgress}%
               </p>
-              <p className="text-sm text-gray-500">Avg. Proficiency</p>
+              <p className="text-sm text-gray-400">Avg. Proficiency</p>
             </Card>
             <Card className="text-center">
               <p className="text-3xl font-bold text-orange-600">{skills.filter(s => s.level < 50).length}</p>
-              <p className="text-sm text-gray-500">Skills to Improve</p>
+              <p className="text-sm text-gray-400">Skills to Improve</p>
             </Card>
           </div>
 
           {/* Skills Overview */}
           <Card>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Skills</h3>
+            <h3 className="text-lg font-semibold text-gray-100 mb-4">Your Skills</h3>
             <div className="space-y-4">
               {skills.map((skill) => {
                 const badge = getLevelBadge(skill.level);
@@ -180,12 +180,12 @@ export default function Profile() {
                   <div key={skill.name}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900">{skill.name}</span>
+                        <span className="font-medium text-gray-200">{skill.name}</span>
                         <Badge variant={badge.variant} size="sm">
                           {badge.label}
                         </Badge>
                       </div>
-                      <span className="text-sm text-gray-500">{skill.level}%</span>
+                      <span className="text-sm text-gray-400">{skill.level}%</span>
                     </div>
                     <ProgressBar
                       value={skill.level}
@@ -208,29 +208,29 @@ export default function Profile() {
 
           {/* Recent Activity */}
           <Card>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
+            <h3 className="text-lg font-semibold text-gray-100 mb-4">Account Settings</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
                 <div>
-                  <p className="font-medium text-gray-900">Email Notifications</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-medium text-gray-200">Email Notifications</p>
+                  <p className="text-sm text-gray-400">
                     Receive updates about your progress
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" defaultChecked className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                  <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-slate-900 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
                 <div>
-                  <p className="font-medium text-gray-900">Weekly Progress Reports</p>
-                  <p className="text-sm text-gray-500">Get a summary of your weekly learning</p>
+                  <p className="font-medium text-gray-200">Weekly Progress Reports</p>
+                  <p className="text-sm text-gray-400">Get a summary of your weekly learning</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" defaultChecked className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                  <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-slate-900 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
             </div>

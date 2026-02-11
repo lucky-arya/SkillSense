@@ -16,6 +16,19 @@ export const connectDatabase = async (): Promise<void> => {
     await mongoose.connect(config.mongodbUri, options);
     
     console.log('✓ MongoDB connected successfully');
+
+    // Clean up stale indexes that may exist from older schema versions
+    try {
+      const usersCollection = mongoose.connection.collection('users');
+      const indexes = await usersCollection.indexes();
+      const staleIndex = indexes.find((idx: any) => idx.name === 'username_1');
+      if (staleIndex) {
+        await usersCollection.dropIndex('username_1');
+        console.log('✓ Dropped stale username_1 index from users collection');
+      }
+    } catch {
+      // Index doesn't exist or collection not yet created — safe to ignore
+    }
     
     // Connection event handlers
     mongoose.connection.on('error', (error) => {

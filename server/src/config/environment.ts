@@ -28,6 +28,9 @@ interface Config {
   
   // CORS
   corsOrigin: string;
+
+  // AI Service (Gemini)
+  geminiApiKey: string;
   
   // Rate Limiting
   rateLimitWindowMs: number;
@@ -66,6 +69,8 @@ export const config: Config = {
   mlServiceTimeout: getEnvVarAsInt('ML_SERVICE_TIMEOUT', 30000),
   
   corsOrigin: getEnvVar('CORS_ORIGIN', 'http://localhost:5173'),
+
+  geminiApiKey: getEnvVar('GEMINI_API_KEY', ''),
   
   rateLimitWindowMs: getEnvVarAsInt('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000),
   rateLimitMaxRequests: getEnvVarAsInt('RATE_LIMIT_MAX_REQUESTS', 100),

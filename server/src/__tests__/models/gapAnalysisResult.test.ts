@@ -96,13 +96,13 @@ describe('GapAnalysisResult Model', () => {
 
   it('should store multiple gaps', async () => {
     const data = validData();
-    data.gaps.push({
+    (data.gaps as any[]).push({
       skillId: 'ts',
       skillName: 'TypeScript',
       currentLevel: 1,
       requiredLevel: 3,
       gapSize: 2,
-      priority: 'medium',
+      priority: 'medium' as const,
       importance: 'good_to_have',
       estimatedTimeToClose: 40,
     });
