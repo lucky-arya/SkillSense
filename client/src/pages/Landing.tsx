@@ -21,42 +21,42 @@ const features = [
     title: 'AI Skill Assessment',
     desc: 'ML-powered assessments that adapt to your level and accurately map your proficiency.',
     color: 'from-blue-500 to-cyan-500',
-    bg: 'bg-blue-50',
+    bg: 'bg-blue-500/20',
   },
   {
     icon: Target,
     title: 'Gap Analysis Engine',
     desc: 'See exactly where you stand vs your dream role with priority-weighted insights.',
     color: 'from-purple-500 to-pink-500',
-    bg: 'bg-purple-50',
+    bg: 'bg-purple-500/20',
   },
   {
     icon: FileText,
     title: 'Resume Analyzer',
     desc: 'Upload your resume for ATS scoring, missing keyword detection, and roast mode 🔥.',
     color: 'from-orange-500 to-red-500',
-    bg: 'bg-orange-50',
+    bg: 'bg-orange-500/20',
   },
   {
     icon: Mic,
     title: 'Mock Interview',
     desc: 'Voice-enabled AI interviews with real-time feedback and detailed evaluation reports.',
     color: 'from-indigo-500 to-violet-500',
-    bg: 'bg-indigo-50',
+    bg: 'bg-indigo-500/20',
   },
   {
     icon: Map,
     title: 'Career Roadmap',
     desc: 'Get a personalized timeline with phases, projects, resources, and milestones.',
     color: 'from-green-500 to-emerald-500',
-    bg: 'bg-green-50',
+    bg: 'bg-green-500/20',
   },
   {
     icon: Bot,
     title: 'AI Career Coach',
     desc: 'Chat with an AI assistant for real-time career advice, study plans, and guidance.',
     color: 'from-cyan-500 to-blue-500',
-    bg: 'bg-cyan-50',
+    bg: 'bg-cyan-500/20',
   },
 ];
 
@@ -65,7 +65,7 @@ const techStack = [
   { name: 'Express', icon: Zap },
   { name: 'FastAPI', icon: Zap },
   { name: 'MongoDB', icon: BarChart3 },
-  { name: 'Gemini AI', icon: Sparkles },
+  { name: 'Groq AI', icon: Sparkles },
   { name: 'Docker', icon: Shield },
 ];
 

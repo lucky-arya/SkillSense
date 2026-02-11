@@ -67,8 +67,8 @@ export default function CareerRoadmap() {
             <Map className="text-white" size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Career Roadmap</h1>
-            <p className="text-sm text-gray-500">Personalized learning path • Powered by Gemini AI</p>
+            <h1 className="text-2xl font-bold text-gray-100">AI Career Roadmap</h1>
+            <p className="text-sm text-gray-500">Personalized learning path • Powered by Groq AI</p>
           </div>
         </div>
       </motion.div>
@@ -96,8 +96,8 @@ export default function CareerRoadmap() {
                     <button key={level} onClick={() => setExperienceLevel(level)}
                       className={`py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
                         experienceLevel === level
-                          ? 'bg-green-50 border-green-300 text-green-700'
-                          : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                          ? 'bg-green-500/10 border-green-500/50 text-green-400'
+                          : 'border-slate-700 text-gray-400 hover:bg-slate-800'
                       }`}>
                       {level}
                     </button>
@@ -106,7 +106,7 @@ export default function CareerRoadmap() {
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">{error}</div>
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">{error}</div>
               )}
 
               <button onClick={handleGenerate} disabled={isLoading}
@@ -136,21 +136,21 @@ export default function CareerRoadmap() {
       {roadmap && !isLoading && (
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="space-y-6">
           {/* Header */}
-          <div className="card bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+          <div className="card bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/30">
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="text-xl font-bold text-green-900 mb-2">Your Roadmap to {targetRole}</h2>
-                <p className="text-sm text-green-800 mb-3">{roadmap.introduction}</p>
+                <h2 className="text-xl font-bold text-green-300 mb-2">Your Roadmap to {targetRole}</h2>
+                <p className="text-sm text-green-300 mb-3">{roadmap.introduction}</p>
                 <div className="flex flex-wrap gap-3 text-xs">
-                  <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full flex items-center gap-1">
+                  <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full flex items-center gap-1">
                     <Clock size={12} /> {roadmap.estimatedDuration}
                   </span>
-                  <span className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full">
+                  <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">
                     {roadmap.currentLevel} → {roadmap.targetLevel}
                   </span>
                 </div>
               </div>
-              <button onClick={() => { setRoadmap(null); }} className="text-sm text-green-700 hover:underline">
+              <button onClick={() => { setRoadmap(null); }} className="text-sm text-green-400 hover:underline">
                 New Roadmap
               </button>
             </div>
@@ -192,8 +192,8 @@ export default function CareerRoadmap() {
                             </span>
                             <span className="text-xs font-medium text-gray-500 uppercase">{step.duration}</span>
                           </div>
-                          <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{step.description}</p>
+                          <h3 className="text-lg font-semibold text-gray-100">{step.title}</h3>
+                          <p className="text-sm text-gray-400 mt-1">{step.description}</p>
                         </div>
                         {isExpanded ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
                       </div>
@@ -210,12 +210,12 @@ export default function CareerRoadmap() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
                               {/* Skills */}
                               <div>
-                                <h4 className="text-sm font-semibold text-blue-700 flex items-center gap-1 mb-2">
+                                <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-1 mb-2">
                                   <Target size={14} /> Skills to Learn
                                 </h4>
                                 <div className="flex flex-wrap gap-1.5">
                                   {step.skills.map((s, j) => (
-                                    <span key={j} className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs border border-blue-200">
+                                    <span key={j} className="px-2.5 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs border border-blue-500/30">
                                       {s}
                                     </span>
                                   ))}
@@ -224,12 +224,12 @@ export default function CareerRoadmap() {
 
                               {/* Projects */}
                               <div>
-                                <h4 className="text-sm font-semibold text-purple-700 flex items-center gap-1 mb-2">
+                                <h4 className="text-sm font-semibold text-purple-400 flex items-center gap-1 mb-2">
                                   <Code2 size={14} /> Projects to Build
                                 </h4>
                                 <ul className="space-y-1.5">
                                   {step.projects.map((p, j) => (
-                                    <li key={j} className="text-xs text-gray-700 flex items-start gap-1.5">
+                                    <li key={j} className="text-xs text-gray-300 flex items-start gap-1.5">
                                       <ArrowRight size={12} className="text-purple-400 mt-0.5 shrink-0" /> {p}
                                     </li>
                                   ))}
@@ -238,12 +238,12 @@ export default function CareerRoadmap() {
 
                               {/* Resources */}
                               <div>
-                                <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1 mb-2">
+                                <h4 className="text-sm font-semibold text-green-400 flex items-center gap-1 mb-2">
                                   <BookOpen size={14} /> Resources
                                 </h4>
                                 <ul className="space-y-1.5">
                                   {step.resources.map((r, j) => (
-                                    <li key={j} className="text-xs text-gray-700 flex items-start gap-1.5">
+                                    <li key={j} className="text-xs text-gray-300 flex items-start gap-1.5">
                                       <span className="text-green-500">📚</span> {r}
                                     </li>
                                   ))}
@@ -252,12 +252,12 @@ export default function CareerRoadmap() {
 
                               {/* Milestones */}
                               <div>
-                                <h4 className="text-sm font-semibold text-amber-700 flex items-center gap-1 mb-2">
+                                <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-1 mb-2">
                                   <Trophy size={14} /> Milestones
                                 </h4>
                                 <ul className="space-y-1.5">
                                   {step.milestones.map((m, j) => (
-                                    <li key={j} className="text-xs text-gray-700 flex items-start gap-1.5">
+                                    <li key={j} className="text-xs text-gray-300 flex items-start gap-1.5">
                                       <span className="text-amber-500">🎯</span> {m}
                                     </li>
                                   ))}
@@ -275,9 +275,9 @@ export default function CareerRoadmap() {
           </div>
 
           {/* Final Advice */}
-          <motion.div variants={fadeIn} className="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200 text-center">
+          <motion.div variants={fadeIn} className="card bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border-primary-500/30 text-center">
             <Sparkles size={24} className="mx-auto text-primary-500 mb-2" />
-            <p className="text-sm text-primary-800 font-medium italic">"{roadmap.finalAdvice}"</p>
+            <p className="text-sm text-primary-300 font-medium italic">"{roadmap.finalAdvice}"</p>
           </motion.div>
         </motion.div>
       )}

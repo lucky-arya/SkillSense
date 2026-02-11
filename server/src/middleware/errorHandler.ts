@@ -65,6 +65,10 @@ export const errorHandler = (
     statusCode = 401;
     errorCode = ERROR_CODES.AUTH_TOKEN_EXPIRED;
     message = 'Authentication token has expired';
+  } else if (error.message?.includes('429') || error.message?.includes('quota') || error.message?.includes('Too Many Requests') || error.message?.includes('rate limit')) {
+    statusCode = 429;
+    errorCode = 'E4029';
+    message = 'AI service is temporarily unavailable due to API rate limits. Please wait a minute and try again.';
   }
 
   // Log error details in development

@@ -38,13 +38,13 @@ export default function ProgressBar({
     <div className="w-full">
       {(showLabel || label) && (
         <div className="flex justify-between items-center mb-1">
-          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-sm font-medium text-gray-300">{label}</span>
           {showLabel && (
             <span className="text-sm text-gray-500">{Math.round(percentage)}%</span>
           )}
         </div>
       )}
-      <div className={clsx('w-full bg-gray-200 rounded-full overflow-hidden', sizeStyles[size])}>
+      <div className={clsx('w-full bg-slate-700 rounded-full overflow-hidden', sizeStyles[size])}>
         <div
           className={clsx('h-full rounded-full transition-all duration-500', colorStyles[color])}
           style={{ width: `${percentage}%` }}

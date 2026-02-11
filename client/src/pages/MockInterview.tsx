@@ -208,8 +208,8 @@ export default function MockInterview() {
             <MessageSquare className="text-white" size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Mock Interview</h1>
-            <p className="text-sm text-gray-500">Voice-enabled • Powered by Gemini AI</p>
+            <h1 className="text-2xl font-bold text-gray-100">AI Mock Interview</h1>
+            <p className="text-sm text-gray-400">Voice-enabled • Powered by Groq AI</p>
           </div>
         </div>
       </motion.div>
@@ -220,7 +220,7 @@ export default function MockInterview() {
           <motion.div key="setup" initial="hidden" animate="visible" exit="hidden" variants={fadeIn}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="card">
-                <h3 className="text-lg font-semibold mb-4">Interview Configuration</h3>
+                <h3 className="text-lg font-semibold text-gray-100 mb-4">Interview Configuration</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="label">Target Role *</label>
@@ -234,8 +234,8 @@ export default function MockInterview() {
                         <button key={d} onClick={() => setDifficulty(d)}
                           className={`py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
                             difficulty === d
-                              ? 'bg-primary-50 border-primary-300 text-primary-700'
-                              : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                              ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                              : 'border-slate-700 text-gray-300 hover:bg-slate-800'
                           }`}>
                           {d.charAt(0).toUpperCase() + d.slice(1)}
                         </button>
@@ -249,7 +249,7 @@ export default function MockInterview() {
                   </div>
 
                   {error && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">{error}</div>
+                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">{error}</div>
                   )}
 
                   <button onClick={startInterview} disabled={isProcessing}
@@ -263,23 +263,23 @@ export default function MockInterview() {
                 </div>
               </div>
 
-              <div className="card bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
-                <h3 className="text-lg font-semibold text-purple-900 mb-3">🎙️ How It Works</h3>
-                <ul className="space-y-3 text-sm text-purple-800">
+              <div className="card bg-gradient-to-br from-purple-500/10 to-indigo-500/10 border-purple-500/30">
+                <h3 className="text-lg font-semibold text-purple-300 mb-3">🎙️ How It Works</h3>
+                <ul className="space-y-3 text-sm text-purple-200">
                   <li className="flex items-start gap-2">
-                    <span className="bg-purple-200 text-purple-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                    <span className="bg-purple-500/30 text-purple-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">1</span>
                     <span>AI generates interview questions tailored to your role and difficulty</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="bg-purple-200 text-purple-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                    <span className="bg-purple-500/30 text-purple-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">2</span>
                     <span>Answer via text or click the microphone for voice input</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="bg-purple-200 text-purple-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                    <span className="bg-purple-500/30 text-purple-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">3</span>
                     <span>Questions are read aloud by AI (Text-to-Speech)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="bg-purple-200 text-purple-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                    <span className="bg-purple-500/30 text-purple-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">4</span>
                     <span>Get a detailed evaluation with scores and feedback</span>
                   </li>
                 </ul>
@@ -294,17 +294,17 @@ export default function MockInterview() {
             <div className="card">
               {/* Progress */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-400">
                   <BarChart3 size={16} />
                   Question {Math.min(currentQIndex + 1, questions.length)} of {questions.length}
                 </div>
                 <button onClick={endInterviewEarly}
-                  className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1">
+                  className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1">
                   <Square size={14} /> End Interview
                 </button>
               </div>
 
-              <div className="w-full bg-gray-200 rounded-full h-1.5 mb-6">
+              <div className="w-full bg-slate-700 rounded-full h-1.5 mb-6">
                 <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500"
                      style={{ width: `${((currentQIndex + 1) / questions.length) * 100}%` }} />
               </div>
@@ -315,14 +315,14 @@ export default function MockInterview() {
                   <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     className={`flex gap-3 ${msg.role === 'candidate' ? 'flex-row-reverse' : ''}`}>
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                      msg.role === 'interviewer' ? 'bg-purple-100' : 'bg-blue-100'
+                      msg.role === 'interviewer' ? 'bg-purple-500/20' : 'bg-blue-500/20'
                     }`}>
-                      {msg.role === 'interviewer' ? <Bot size={18} className="text-purple-600" /> : <User size={18} className="text-blue-600" />}
+                      {msg.role === 'interviewer' ? <Bot size={18} className="text-purple-400" /> : <User size={18} className="text-blue-400" />}
                     </div>
                     <div className={`max-w-[75%] p-3 rounded-xl text-sm ${
                       msg.role === 'interviewer'
-                        ? 'bg-gray-100 text-gray-800'
-                        : 'bg-primary-600 text-white'
+                        ? 'bg-slate-800 text-gray-200 border border-slate-700'
+                        : 'bg-blue-600 text-white'
                     }`}>
                       {msg.content}
                     </div>
@@ -330,14 +330,14 @@ export default function MockInterview() {
                 ))}
                 {isProcessing && (
                   <div className="flex gap-3">
-                    <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center">
-                      <Bot size={18} className="text-purple-600" />
+                    <div className="w-9 h-9 rounded-full bg-purple-500/20 flex items-center justify-center">
+                      <Bot size={18} className="text-purple-400" />
                     </div>
-                    <div className="bg-gray-100 p-3 rounded-xl">
+                    <div className="bg-slate-800 border border-slate-700 p-3 rounded-xl">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                       </div>
                     </div>
                   </div>
@@ -346,12 +346,12 @@ export default function MockInterview() {
               </div>
 
               {/* Input */}
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t">
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-700">
                 <button onClick={toggleListening}
                   className={`p-3 rounded-xl transition-all ${
                     isListening
-                      ? 'bg-red-100 text-red-600 animate-pulse'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-red-500/20 text-red-400 animate-pulse'
+                      : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
                   }`}>
                   {isListening ? <MicOff size={20} /> : <Mic size={20} />}
                 </button>
@@ -377,8 +377,8 @@ export default function MockInterview() {
           <motion.div key="evaluating" initial="hidden" animate="visible" variants={fadeIn}
             className="card flex flex-col items-center justify-center py-20">
             <Loader2 size={48} className="animate-spin text-purple-500 mb-4" />
-            <p className="font-semibold text-lg">Evaluating Your Interview...</p>
-            <p className="text-sm text-gray-500 mt-1">AI is analyzing your answers</p>
+            <p className="font-semibold text-lg text-gray-100">Evaluating Your Interview...</p>
+            <p className="text-sm text-gray-400 mt-1">AI is analyzing your answers</p>
           </motion.div>
         )}
 
@@ -394,8 +394,8 @@ export default function MockInterview() {
                 { label: 'Soft Skills', score: evaluation.softSkillScore, icon: BarChart3 },
               ].map(({ label, score, icon: Icon }) => (
                 <motion.div key={label} variants={fadeIn} className="card text-center">
-                  <Icon size={20} className="mx-auto text-gray-400 mb-1" />
-                  <p className="text-xs text-gray-500 uppercase">{label}</p>
+                  <Icon size={20} className="mx-auto text-gray-500 mb-1" />
+                  <p className="text-xs text-gray-400 uppercase">{label}</p>
                   <p className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</p>
                 </motion.div>
               ))}
@@ -403,33 +403,33 @@ export default function MockInterview() {
 
             {/* Feedback */}
             <motion.div variants={fadeIn} className="card">
-              <h3 className="font-semibold text-gray-900 mb-2">Overall Feedback</h3>
-              <p className="text-sm text-gray-700">{evaluation.feedback}</p>
+              <h3 className="font-semibold text-gray-100 mb-2">Overall Feedback</h3>
+              <p className="text-sm text-gray-300">{evaluation.feedback}</p>
             </motion.div>
 
             {/* Question-by-Question */}
             <motion.div variants={fadeIn} className="card">
-              <h3 className="font-semibold text-gray-900 mb-4">Question Breakdown</h3>
+              <h3 className="font-semibold text-gray-100 mb-4">Question Breakdown</h3>
               <div className="space-y-4">
                 {evaluation.questionEvaluations.map((qe, i) => (
-                  <div key={i} className="border rounded-lg p-4">
+                  <div key={i} className="border border-slate-700 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <p className="font-medium text-sm text-gray-800 flex-1">{qe.question}</p>
+                      <p className="font-medium text-sm text-gray-200 flex-1">{qe.question}</p>
                       <span className={`text-lg font-bold ml-3 ${getScoreColor(qe.score * 10)}`}>
                         {qe.score}/10
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{qe.evaluation}</p>
+                    <p className="text-sm text-gray-400 mb-2">{qe.evaluation}</p>
                     <details className="text-sm">
-                      <summary className="text-primary-600 cursor-pointer font-medium">View ideal answer & tips</summary>
-                      <div className="mt-2 space-y-2 pl-4 border-l-2 border-primary-200">
+                      <summary className="text-blue-400 cursor-pointer font-medium">View ideal answer & tips</summary>
+                      <div className="mt-2 space-y-2 pl-4 border-l-2 border-blue-500/30">
                         <div>
-                          <span className="font-medium text-green-700">Ideal Answer:</span>
-                          <p className="text-gray-600">{qe.idealAnswer}</p>
+                          <span className="font-medium text-green-400">Ideal Answer:</span>
+                          <p className="text-gray-400">{qe.idealAnswer}</p>
                         </div>
                         <div>
-                          <span className="font-medium text-amber-700">Areas to Improve:</span>
-                          <p className="text-gray-600">{qe.areasToImprove}</p>
+                          <span className="font-medium text-amber-400">Areas to Improve:</span>
+                          <p className="text-gray-400">{qe.areasToImprove}</p>
                         </div>
                       </div>
                     </details>

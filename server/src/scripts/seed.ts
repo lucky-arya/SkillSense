@@ -763,7 +763,7 @@ async function seed() {
       {
         title: 'LeetCode Premium',
         description: 'Practice coding problems with detailed solutions',
-        type: 'practice',
+        type: 'project',
         url: 'https://leetcode.com',
         provider: 'LeetCode',
         skillId: algoSkill?._id,
@@ -808,7 +808,10 @@ async function seed() {
       },
     ].filter(r => r.skillId); // Filter out resources with undefined skillIds
     
-    await LearningResource.insertMany(learningResourcesData);
+    await LearningResource.insertMany(learningResourcesData.map(r => {
+      const skill = skills.find(s => s._id.equals(r.skillId));
+      return { ...r, skillName: skill?.name || 'Unknown' };
+    }));
     console.log(`✓ Created ${learningResourcesData.length} learning resources`);
 
     console.log('\n════════════════════════════════════════');

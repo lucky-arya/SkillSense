@@ -1,50 +1,158 @@
 /**
- * SkillSense AI - Gemini AI Service
- * 
- * Wraps Google Generative AI SDK for all AI-powered features:
- * - Resume analysis & scoring
- * - Mock interview generation
- * - Career roadmap generation
- * - AI chat assistant
+ * SkillSense AI - Optimized Groq AI Service
+ *
+ * Optimizations:
+ * 1. Tiered models — fast 8b for chat/simple, 70b for complex analysis
+ * 2. JSON mode (response_format) — guaranteed valid JSON, fewer tokens
+ * 3. Tuned max_tokens per endpoint — no wasted tokens
+ * 4. Lower temperature for structured output (0.3) vs creative (0.7)
+ * 5. In-memory response cache for duplicate prompts (5 min TTL)
+ * 6. Retry with exponential backoff on 429
  */
 
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
-// Initialize Gemini
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
-let genAI: GoogleGenerativeAI | null = null;
-let flashModel: GenerativeModel | null = null;
-let proModel: GenerativeModel | null = null;
+// ─── Config ─────────────────────────────────────
+const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
+let groqClient: Groq | null = null;
 
-function getGenAI(): GoogleGenerativeAI {
-  if (!genAI) {
-    if (!GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY is not set in environment variables');
+// Tiered models
+const FAST_MODEL = 'llama-3.1-8b-instant';     // Chat, quick evals — blazing fast
+const SMART_MODEL = 'llama-3.3-70b-versatile';  // Resume analysis, roadmaps, deep evals
+
+function getClient(): Groq {
+  if (!groqClient) {
+    if (!GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set in environment variables');
+    groqClient = new Groq({ apiKey: GROQ_API_KEY });
+  }
+  return groqClient;
+}
+
+// ─── Simple LRU Cache (5 min TTL) ──────────────
+const cache = new Map<string, { data: string; exp: number }>();
+const CACHE_TTL = 5 * 60 * 1000;
+
+function getCached(key: string): string | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.exp) { cache.delete(key); return null; }
+  return entry.data;
+}
+
+function setCache(key: string, data: string): void {
+  // Evict oldest if cache grows too big
+  if (cache.size > 100) {
+    const oldest = cache.keys().next().value;
+    if (oldest) cache.delete(oldest);
+  }
+  cache.set(key, { data, exp: Date.now() + CACHE_TTL });
+}
+
+// ─── Core Generation ────────────────────────────
+interface GenerateOpts {
+  system: string;
+  user: string;
+  model?: string;
+  maxTokens?: number;
+  temperature?: number;
+  jsonMode?: boolean;
+  cacheKey?: string;
+}
+
+async function generate(opts: GenerateOpts): Promise<string> {
+  const {
+    system,
+    user,
+    model = SMART_MODEL,
+    maxTokens = 2048,
+    temperature = 0.4,
+    jsonMode = false,
+    cacheKey,
+  } = opts;
+
+  // Check cache
+  if (cacheKey) {
+    const hit = getCached(cacheKey);
+    if (hit) return hit;
+  }
+
+  const client = getClient();
+  const maxRetries = 2;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const params: any = {
+        model,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user },
+        ],
+        temperature,
+        max_tokens: maxTokens,
+      };
+      if (jsonMode) {
+        params.response_format = { type: 'json_object' };
+      }
+
+      const completion = await client.chat.completions.create(params);
+      const text = completion.choices[0]?.message?.content || '';
+
+      if (cacheKey) setCache(cacheKey, text);
+      return text;
+    } catch (error: any) {
+      const status = error?.status || error?.statusCode;
+      const msg = error?.message || '';
+      if (status === 429 || msg.includes('429') || msg.includes('rate_limit')) {
+        if (attempt < maxRetries) {
+          const waitMs = (attempt + 1) * 3000; // 3s, 6s
+          console.log(`Rate limited, retrying in ${waitMs / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
+          await new Promise(r => setTimeout(r, waitMs));
+          continue;
+        }
+        throw new Error('AI service is temporarily unavailable due to API rate limits. Please wait a minute and try again.');
+      }
+      throw error;
     }
-    genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   }
-  return genAI;
+  throw new Error('AI generation failed after retries');
 }
 
-function getFlashModel(): GenerativeModel {
-  if (!flashModel) {
-    flashModel = getGenAI().getGenerativeModel({ model: 'gemini-2.0-flash' });
+// Multi-turn chat generation
+async function generateChat(
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+  model = FAST_MODEL,
+  maxTokens = 1024,
+): Promise<string> {
+  const client = getClient();
+  const maxRetries = 2;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const completion = await client.chat.completions.create({
+        model,
+        messages,
+        temperature: 0.7,
+        max_tokens: maxTokens,
+      });
+      return completion.choices[0]?.message?.content || '';
+    } catch (error: any) {
+      const status = error?.status || error?.statusCode;
+      const msg = error?.message || '';
+      if (status === 429 || msg.includes('429') || msg.includes('rate_limit')) {
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, (attempt + 1) * 3000));
+          continue;
+        }
+        throw new Error('AI service is temporarily unavailable due to API rate limits. Please wait a minute and try again.');
+      }
+      throw error;
+    }
   }
-  return flashModel;
+  throw new Error('AI generation failed after retries');
 }
 
-function getProModel(): GenerativeModel {
-  if (!proModel) {
-    proModel = getGenAI().getGenerativeModel({ model: 'gemini-2.0-flash' });
-  }
-  return proModel;
-}
-
-// ==========================================
-// Helper: Parse JSON from AI response
-// ==========================================
+// ─── JSON Extractor ─────────────────────────────
 function extractJSON<T>(text: string): T {
-  // Try to extract JSON from markdown code blocks first
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   const jsonStr = jsonMatch ? jsonMatch[1].trim() : text.trim();
   return JSON.parse(jsonStr) as T;
@@ -73,61 +181,31 @@ export interface ResumeRoastResult {
 export async function analyzeResume(
   resumeText: string,
   targetRole: string,
-  targetField: string
+  targetField: string,
 ): Promise<ResumeAnalysisResult> {
-  const model = getFlashModel();
-  
-  const prompt = `You are an expert ATS (Applicant Tracking System) and career coach. Analyze this resume against the target role.
-
-TARGET ROLE: ${targetRole}
-TARGET FIELD: ${targetField}
-
-RESUME:
-${resumeText}
-
-TASK: Provide a comprehensive analysis. Return ONLY a valid JSON object with this exact structure:
-{
-  "overallScore": <number 0-100>,
-  "atsScore": <number 0-100>,
-  "strengths": ["strength1", "strength2", "strength3"],
-  "weaknesses": ["weakness1", "weakness2", "weakness3"],
-  "missingKeywords": ["keyword1", "keyword2", "keyword3"],
-  "suggestions": ["actionable suggestion 1", "actionable suggestion 2", "actionable suggestion 3"],
-  "experienceLevel": "entry|mid|senior",
-  "summary": "2-3 sentence overall assessment"
-}
-
-Be specific and actionable. Score honestly.`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const text = await generate({
+    model: SMART_MODEL,
+    system: 'You are an expert ATS and career coach. Respond with ONLY valid JSON.',
+    user: `Analyze this resume for "${targetRole}" in ${targetField}.\n\nRESUME:\n${resumeText}\n\nReturn JSON: {"overallScore":0-100,"atsScore":0-100,"strengths":["..."],"weaknesses":["..."],"missingKeywords":["..."],"suggestions":["..."],"experienceLevel":"entry|mid|senior","summary":"2-3 sentences"}`,
+    jsonMode: true,
+    maxTokens: 1500,
+    temperature: 0.3,
+  });
   return extractJSON<ResumeAnalysisResult>(text);
 }
 
 export async function roastResume(
   resumeText: string,
-  targetRole: string
+  targetRole: string,
 ): Promise<ResumeRoastResult> {
-  const model = getFlashModel();
-  
-  const prompt = `You are a brutally honest but helpful resume critic known for your witty, sarcastic commentary. Roast this resume.
-
-TARGET ROLE: ${targetRole}
-
-RESUME:
-${resumeText}
-
-Return ONLY a valid JSON object:
-{
-  "roastComments": ["5-7 sarcastic but professional observations about the resume's flaws"],
-  "improvementTips": ["3-5 actually useful tips to fix the roasted parts"],
-  "memeVerdict": "A single funny one-liner verdict (e.g., 'This resume commits more crimes than it solves.')"
-}
-
-Be funny but keep it professional. The goal is to entertain while providing real value.`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const text = await generate({
+    model: FAST_MODEL,
+    system: 'You are a witty resume critic. Respond with ONLY valid JSON.',
+    user: `Roast this resume for "${targetRole}".\n\nRESUME:\n${resumeText}\n\nReturn JSON: {"roastComments":["5-7 sarcastic observations"],"improvementTips":["3-5 useful tips"],"memeVerdict":"funny one-liner"}`,
+    jsonMode: true,
+    maxTokens: 1024,
+    temperature: 0.8,
+  });
   return extractJSON<ResumeRoastResult>(text);
 }
 
@@ -160,33 +238,18 @@ export async function generateInterviewQuestions(
   targetRole: string,
   difficulty: 'easy' | 'intermediate' | 'hard',
   resumeText?: string,
-  focusArea?: string
+  focusArea?: string,
 ): Promise<InterviewQuestion[]> {
-  const model = getFlashModel();
-  
-  const prompt = `You are an expert interviewer for ${targetRole} positions.
-${resumeText ? `\nCANDIDATE BACKGROUND:\n${resumeText}\n` : ''}
-${focusArea ? `FOCUS AREA: ${focusArea}\n` : ''}
-DIFFICULTY: ${difficulty}
-
-Generate 5 interview questions. Mix behavioral and technical questions.
-For ${difficulty} difficulty:
-- easy: foundational concepts, basic behavioral
-- intermediate: practical scenarios, system design basics
-- hard: complex architecture, advanced behavioral, edge cases
-
-Return ONLY a valid JSON array:
-[
-  {
-    "question": "The question text",
-    "category": "technical|behavioral|situational",
-    "difficulty": "${difficulty}",
-    "tips": "Brief tip on what the interviewer is looking for"
-  }
-]`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const cacheKey = `iq:${targetRole}:${difficulty}:${focusArea || ''}`;
+  const text = await generate({
+    model: FAST_MODEL,
+    system: `You are an expert interviewer for ${targetRole}. Respond with ONLY valid JSON.`,
+    user: `${resumeText ? `CANDIDATE BACKGROUND:\n${resumeText}\n` : ''}${focusArea ? `FOCUS: ${focusArea}\n` : ''}DIFFICULTY: ${difficulty}\n\nGenerate 5 questions. Return JSON array: [{"question":"...","category":"technical|behavioral|situational","difficulty":"${difficulty}","tips":"..."}]`,
+    jsonMode: true,
+    maxTokens: 1500,
+    temperature: 0.6,
+    cacheKey,
+  });
   return extractJSON<InterviewQuestion[]>(text);
 }
 
@@ -194,72 +257,33 @@ export async function evaluateInterviewAnswer(
   question: string,
   answer: string,
   targetRole: string,
-  conversationHistory: Array<{ role: string; content: string }>
+  conversationHistory: Array<{ role: string; content: string }>,
 ): Promise<{ feedback: string; score: number; followUp?: string }> {
-  const model = getFlashModel();
-  
-  const historyStr = conversationHistory
-    .map(h => `${h.role}: ${h.content}`)
-    .join('\n');
-  
-  const prompt = `You are interviewing a candidate for ${targetRole}.
-
-CONVERSATION SO FAR:
-${historyStr}
-
-CURRENT QUESTION: ${question}
-CANDIDATE'S ANSWER: ${answer}
-
-Evaluate the answer and provide a follow-up question if appropriate.
-Return ONLY a valid JSON object:
-{
-  "feedback": "Brief internal note about answer quality",
-  "score": <1-10>,
-  "followUp": "Next question or follow-up (null if interview should move to next topic)"
-}`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const historyStr = conversationHistory.slice(-6).map(h => `${h.role}: ${h.content}`).join('\n');
+  const text = await generate({
+    model: FAST_MODEL,
+    system: `You are an interviewer for ${targetRole}. Respond with ONLY valid JSON.`,
+    user: `HISTORY:\n${historyStr}\n\nQUESTION: ${question}\nANSWER: ${answer}\n\nReturn JSON: {"feedback":"brief note","score":1-10,"followUp":"next question or null"}`,
+    jsonMode: true,
+    maxTokens: 512,
+    temperature: 0.4,
+  });
   return extractJSON<{ feedback: string; score: number; followUp?: string }>(text);
 }
 
 export async function generateInterviewEvaluation(
   targetRole: string,
-  conversationHistory: Array<{ role: string; content: string }>
+  conversationHistory: Array<{ role: string; content: string }>,
 ): Promise<InterviewEvaluation> {
-  const model = getFlashModel();
-  
-  const historyStr = conversationHistory
-    .map(h => `${h.role}: ${h.content}`)
-    .join('\n');
-  
-  const prompt = `You are evaluating a mock interview for ${targetRole}.
-
-FULL INTERVIEW TRANSCRIPT:
-${historyStr}
-
-Provide a comprehensive evaluation. Return ONLY a valid JSON object:
-{
-  "overallScore": <0-100>,
-  "softSkillScore": <0-100>,
-  "technicalScore": <0-100>,
-  "communicationScore": <0-100>,
-  "feedback": "3-4 sentence overall assessment",
-  "questionEvaluations": [
-    {
-      "question": "The question asked",
-      "score": <0-10>,
-      "evaluation": "How well they answered",
-      "idealAnswer": "What a strong answer would include",
-      "areasToImprove": "Specific improvement suggestion"
-    }
-  ]
-}
-
-Be constructive but honest.`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const historyStr = conversationHistory.map(h => `${h.role}: ${h.content}`).join('\n');
+  const text = await generate({
+    model: SMART_MODEL,
+    system: 'You are an expert interview evaluator. Respond with ONLY valid JSON.',
+    user: `Evaluate mock interview for ${targetRole}.\n\nTRANSCRIPT:\n${historyStr}\n\nReturn JSON: {"overallScore":0-100,"softSkillScore":0-100,"technicalScore":0-100,"communicationScore":0-100,"feedback":"3-4 sentences","questionEvaluations":[{"question":"...","score":0-10,"evaluation":"...","idealAnswer":"...","areasToImprove":"..."}]}`,
+    jsonMode: true,
+    maxTokens: 2500,
+    temperature: 0.3,
+  });
   return extractJSON<InterviewEvaluation>(text);
 }
 
@@ -287,108 +311,68 @@ export interface CareerRoadmap {
 export async function generateCareerRoadmap(
   currentSkills: Array<{ name: string; level: number }>,
   targetRole: string,
-  experienceLevel?: string
+  experienceLevel?: string,
 ): Promise<CareerRoadmap> {
-  const model = getFlashModel();
-  
-  const skillsStr = currentSkills
-    .map(s => `${s.name}: ${s.level}/5`)
-    .join(', ');
-  
-  const prompt = `You are an expert career coach creating a personalized learning roadmap.
+  const skillsStr = currentSkills.map(s => `${s.name}:${s.level}/5`).join(', ');
+  const cacheKey = `road:${targetRole}:${skillsStr}:${experienceLevel || ''}`;
 
-CURRENT SKILLS: ${skillsStr}
-TARGET ROLE: ${targetRole}
-${experienceLevel ? `EXPERIENCE LEVEL: ${experienceLevel}` : ''}
-
-Create a detailed, actionable career roadmap to bridge the skill gaps. Return ONLY a valid JSON object:
-{
-  "introduction": "Encouraging 2-3 sentence intro personalized to their situation",
-  "currentLevel": "entry|junior|mid|senior",
-  "targetLevel": "The level of the target role",
-  "estimatedDuration": "e.g., '6-12 months'",
-  "timelineSteps": [
-    {
-      "phase": "Phase 1",
-      "duration": "Months 0-2",
-      "title": "Build Foundations",
-      "description": "What this phase focuses on",
-      "skills": ["Specific skill 1", "Specific skill 2"],
-      "projects": ["Concrete project idea 1"],
-      "resources": ["Specific course/book/tutorial with real names"],
-      "milestones": ["Measurable milestone 1"]
-    }
-  ],
-  "finalAdvice": "Motivational closing advice"
-}
-
-Include 4-6 timeline steps. Be SPECIFIC about resources (use real course names, books, websites). Projects should be concrete and portfolio-worthy.`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const text = await generate({
+    model: SMART_MODEL,
+    system: 'You are an expert career coach. Respond with ONLY valid JSON.',
+    user: `SKILLS: ${skillsStr}\nTARGET: ${targetRole}\n${experienceLevel ? `LEVEL: ${experienceLevel}` : ''}\n\nCreate career roadmap. Return JSON: {"introduction":"2-3 sentences","currentLevel":"entry|junior|mid|senior","targetLevel":"...","estimatedDuration":"e.g. 6-12 months","timelineSteps":[{"phase":"Phase 1","duration":"Months 0-2","title":"...","description":"...","skills":["..."],"projects":["..."],"resources":["real course/book names"],"milestones":["..."]}],"finalAdvice":"motivational advice"}\n\nInclude 4-6 steps with SPECIFIC real resources.`,
+    jsonMode: true,
+    maxTokens: 3000,
+    temperature: 0.5,
+    cacheKey,
+  });
   return extractJSON<CareerRoadmap>(text);
 }
 
 // ==========================================
-// AI Chat Assistant
+// AI Chat (uses fast model, multi-turn)
 // ==========================================
 export async function chatWithAI(
   message: string,
   conversationHistory: Array<{ role: string; content: string }>,
-  userContext?: { skills?: string[]; targetRole?: string; name?: string }
+  userContext?: { skills?: string[]; targetRole?: string; name?: string },
 ): Promise<string> {
-  const model = getFlashModel();
-  
-  const systemContext = userContext
-    ? `\nUSER CONTEXT: Name: ${userContext.name || 'User'}, Skills: ${userContext.skills?.join(', ') || 'Unknown'}, Target Role: ${userContext.targetRole || 'Not specified'}\n`
+  const ctx = userContext
+    ? `\nUser: ${userContext.name || 'User'}, Skills: ${userContext.skills?.join(', ') || 'N/A'}, Target: ${userContext.targetRole || 'N/A'}`
     : '';
-  
-  const historyStr = conversationHistory
-    .slice(-10) // Keep last 10 messages for context
-    .map(h => `${h.role}: ${h.content}`)
-    .join('\n');
-  
-  const prompt = `You are SkillSense AI, an expert career advisor and skill development coach. You help students and professionals identify skill gaps and plan their career growth.
-${systemContext}
-CONVERSATION HISTORY:
-${historyStr}
 
-USER: ${message}
+  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+    {
+      role: 'system',
+      content: `You are SkillSense AI, an expert career advisor.${ctx}\nBe concise, actionable. Use markdown. Under 250 words.`,
+    },
+  ];
 
-Respond helpfully and concisely. If asked about career advice, be specific and actionable. Use markdown formatting for readability when appropriate. Keep responses focused and under 300 words unless the user asks for detailed explanations.`;
+  // Keep last 8 messages to save tokens
+  for (const h of conversationHistory.slice(-8)) {
+    messages.push({
+      role: h.role === 'assistant' ? 'assistant' as const : 'user' as const,
+      content: h.content,
+    });
+  }
+  messages.push({ role: 'user', content: message });
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  return generateChat(messages, FAST_MODEL, 1024);
 }
 
 // ==========================================
-// Skill Extraction from Resume
+// Skill Extraction
 // ==========================================
 export async function extractSkillsFromResume(
-  resumeText: string
+  resumeText: string,
 ): Promise<{ skills: Array<{ name: string; level: string; category: string }> }> {
-  const model = getFlashModel();
-  
-  const prompt = `Extract all professional skills from this resume and estimate proficiency levels.
-
-RESUME:
-${resumeText}
-
-Return ONLY a valid JSON object:
-{
-  "skills": [
-    {
-      "name": "Skill Name",
-      "level": "beginner|intermediate|advanced|expert",
-      "category": "technical|soft|domain"
-    }
-  ]
-}
-
-Be thorough - extract programming languages, frameworks, tools, soft skills, methodologies, etc.`;
-
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  const text = await generate({
+    model: FAST_MODEL,
+    system: 'You are an expert skill extractor. Respond with ONLY valid JSON.',
+    user: `Extract skills from resume.\n\nRESUME:\n${resumeText}\n\nReturn JSON: {"skills":[{"name":"...","level":"beginner|intermediate|advanced|expert","category":"technical|soft|domain"}]}`,
+    jsonMode: true,
+    maxTokens: 1024,
+    temperature: 0.2,
+  });
   return extractJSON<{ skills: Array<{ name: string; level: string; category: string }> }>(text);
 }
 

@@ -156,10 +156,10 @@ export default function Recommendations() {
                     <div
                       className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                         rec.priority === 'critical'
-                          ? 'bg-red-100'
+                          ? 'bg-red-500/20'
                           : rec.priority === 'high'
-                          ? 'bg-orange-100'
-                          : 'bg-yellow-100'
+                          ? 'bg-orange-500/20'
+                          : 'bg-yellow-500/20'
                       }`}
                     >
                       <span className="text-xl font-bold text-gray-400">
@@ -240,7 +240,7 @@ export default function Recommendations() {
                             <div className="flex items-start gap-3">
                               <div
                                 className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                  isCompleted ? 'bg-green-100' : 'bg-primary-100'
+                                  isCompleted ? 'bg-green-500/20' : 'bg-primary-500/20'
                                 }`}
                               >
                                 <Icon

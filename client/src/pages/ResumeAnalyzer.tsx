@@ -116,8 +116,8 @@ export default function ResumeAnalyzer() {
             <FileText className="text-white" size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Resume Analyzer</h1>
-            <p className="text-sm text-gray-500">Powered by Google Gemini AI</p>
+            <h1 className="text-2xl font-bold text-gray-100">AI Resume Analyzer</h1>
+            <p className="text-sm text-gray-500">Powered by Groq AI</p>
           </div>
         </div>
       </motion.div>
@@ -126,14 +126,14 @@ export default function ResumeAnalyzer() {
         {/* Left Panel - Upload & Config */}
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="lg:col-span-1 space-y-4">
           <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4">Setup</h3>
+            <h3 className="font-semibold text-gray-100 mb-4">Setup</h3>
 
             {/* File Upload */}
             <div
               onDrop={handleDrop}
               onDragOver={(e) => e.preventDefault()}
               className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                file ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-primary-400 hover:bg-primary-50'
+                file ? 'border-green-500/50 bg-green-500/10' : 'border-slate-600 hover:border-primary-400 hover:bg-primary-500/10'
               }`}
               onClick={() => fileInputRef.current?.click()}
             >
@@ -150,7 +150,7 @@ export default function ResumeAnalyzer() {
               {file ? (
                 <div className="flex items-center justify-center space-x-2">
                   <FileText size={20} className="text-green-600" />
-                  <span className="text-sm font-medium text-green-700 truncate max-w-[180px]">{file.name}</span>
+                  <span className="text-sm font-medium text-green-400 truncate max-w-[180px]">{file.name}</span>
                   <button onClick={(e) => { e.stopPropagation(); setFile(null); setAnalysis(null); setRoast(null); }}>
                     <X size={16} className="text-gray-400 hover:text-red-500" />
                   </button>
@@ -191,7 +191,7 @@ export default function ResumeAnalyzer() {
             </div>
 
             {error && (
-              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">
                 {error}
               </div>
             )}
@@ -256,11 +256,11 @@ export default function ResumeAnalyzer() {
             {mode === 'done' && (analysis || roast) && (
               <motion.div key="results" initial="hidden" animate="visible" variants={fadeIn}>
                 {/* Tabs */}
-                <div className="flex space-x-1 mb-4 bg-gray-100 rounded-lg p-1">
+                <div className="flex space-x-1 mb-4 bg-slate-800 rounded-lg p-1">
                   <button
                     onClick={() => setActiveTab('rank')}
                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'rank' ? 'bg-white shadow-sm text-primary-700' : 'text-gray-600 hover:text-gray-900'
+                      activeTab === 'rank' ? 'bg-slate-700 shadow-sm text-primary-400' : 'text-gray-400 hover:text-gray-100'
                     }`}
                   >
                     <Target size={16} className="inline mr-1" /> Rank Analysis
@@ -268,7 +268,7 @@ export default function ResumeAnalyzer() {
                   <button
                     onClick={() => setActiveTab('roast')}
                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'roast' ? 'bg-white shadow-sm text-orange-600' : 'text-gray-600 hover:text-gray-900'
+                      activeTab === 'roast' ? 'bg-slate-700 shadow-sm text-orange-400' : 'text-gray-400 hover:text-gray-100'
                     }`}
                   >
                     <Flame size={16} className="inline mr-1" /> Roast
@@ -284,7 +284,7 @@ export default function ResumeAnalyzer() {
                         <div className={`text-4xl font-bold ${getScoreColor(analysis.overallScore)}`}>
                           {analysis.overallScore}
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div className="w-full bg-slate-700 rounded-full h-2 mt-2">
                           <div className={`h-2 rounded-full bg-gradient-to-r ${getScoreBg(analysis.overallScore)}`}
                                style={{ width: `${analysis.overallScore}%` }} />
                         </div>
@@ -294,7 +294,7 @@ export default function ResumeAnalyzer() {
                         <div className={`text-4xl font-bold ${getScoreColor(analysis.atsScore)}`}>
                           {analysis.atsScore}
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div className="w-full bg-slate-700 rounded-full h-2 mt-2">
                           <div className={`h-2 rounded-full bg-gradient-to-r ${getScoreBg(analysis.atsScore)}`}
                                style={{ width: `${analysis.atsScore}%` }} />
                         </div>
@@ -303,15 +303,15 @@ export default function ResumeAnalyzer() {
 
                     {/* Summary */}
                     <motion.div variants={fadeIn} className="card">
-                      <p className="text-sm text-gray-700">{analysis.summary}</p>
-                      <span className="inline-block mt-2 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                      <p className="text-sm text-gray-300">{analysis.summary}</p>
+                      <span className="inline-block mt-2 text-xs font-medium bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
                         {analysis.experienceLevel} level
                       </span>
                     </motion.div>
 
                     {/* Strengths */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-green-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-green-400 flex items-center gap-2 mb-3">
                         <CheckCircle size={18} /> Strengths
                       </h4>
                       <ul className="space-y-2">
@@ -325,7 +325,7 @@ export default function ResumeAnalyzer() {
 
                     {/* Weaknesses */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-red-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-red-400 flex items-center gap-2 mb-3">
                         <AlertTriangle size={18} /> Weaknesses
                       </h4>
                       <ul className="space-y-2">
@@ -339,12 +339,12 @@ export default function ResumeAnalyzer() {
 
                     {/* Missing Keywords */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-amber-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-amber-400 flex items-center gap-2 mb-3">
                         <Search size={18} /> Missing Keywords
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {analysis.missingKeywords.map((k, i) => (
-                          <span key={i} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-sm border border-amber-200">
+                          <span key={i} className="px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-sm border border-amber-500/30">
                             {k}
                           </span>
                         ))}
@@ -353,7 +353,7 @@ export default function ResumeAnalyzer() {
 
                     {/* Suggestions */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-blue-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-blue-400 flex items-center gap-2 mb-3">
                         <TrendingUp size={18} /> Suggestions
                       </h4>
                       <ul className="space-y-2">
@@ -370,21 +370,21 @@ export default function ResumeAnalyzer() {
                 {activeTab === 'roast' && roast && (
                   <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-4">
                     {/* Verdict */}
-                    <motion.div variants={fadeIn} className="card bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
+                    <motion.div variants={fadeIn} className="card bg-gradient-to-br from-orange-500/10 to-red-500/10 border-orange-500/30">
                       <div className="text-center">
                         <Flame size={32} className="mx-auto text-orange-500 mb-2" />
-                        <p className="text-lg font-bold text-orange-800 italic">"{roast.memeVerdict}"</p>
+                        <p className="text-lg font-bold text-orange-300 italic">"{roast.memeVerdict}"</p>
                       </div>
                     </motion.div>
 
                     {/* Roast Comments */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-orange-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-orange-400 flex items-center gap-2 mb-3">
                         <Flame size={18} /> The Roast
                       </h4>
                       <ul className="space-y-3">
                         {roast.roastComments.map((c, i) => (
-                          <li key={i} className="flex items-start gap-3 text-sm bg-orange-50 p-3 rounded-lg">
+                          <li key={i} className="flex items-start gap-3 text-sm bg-orange-500/10 p-3 rounded-lg">
                             <span className="text-xl">🔥</span> {c}
                           </li>
                         ))}
@@ -393,7 +393,7 @@ export default function ResumeAnalyzer() {
 
                     {/* Tips */}
                     <motion.div variants={fadeIn} className="card">
-                      <h4 className="font-semibold text-green-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-green-400 flex items-center gap-2 mb-3">
                         <Award size={18} /> Actually Useful Tips
                       </h4>
                       <ul className="space-y-2">

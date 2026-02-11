@@ -120,7 +120,7 @@ export default function Profile() {
 
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary-500/20 rounded-lg flex items-center justify-center">
                   <Target size={20} className="text-primary-600" />
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export default function Profile() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-secondary-500/20 rounded-lg flex items-center justify-center">
                   <Calendar size={20} className="text-secondary-600" />
                 </div>
                 <div>

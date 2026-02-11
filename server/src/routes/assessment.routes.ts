@@ -16,6 +16,18 @@ router.use(authenticate);
 // Get available assessments
 router.get('/', assessmentController.getAssessments);
 
+// Get user's assessment history (must be before /:id to avoid route conflict)
+router.get('/history', assessmentController.getUserAssessmentHistory);
+
+// Get specific assessment result
+router.get(
+  '/result/:resultId',
+  validate([
+    param('resultId').isMongoId().withMessage('Invalid result ID'),
+  ]),
+  assessmentController.getAssessmentResult
+);
+
 // Get assessment by ID
 router.get(
   '/:id',
@@ -44,18 +56,6 @@ router.post(
       .isInt({ min: 0 }),
   ]),
   assessmentController.submitAssessment
-);
-
-// Get user's assessment history
-router.get('/history/me', assessmentController.getUserAssessmentHistory);
-
-// Get specific assessment result
-router.get(
-  '/result/:resultId',
-  validate([
-    param('resultId').isMongoId().withMessage('Invalid result ID'),
-  ]),
-  assessmentController.getAssessmentResult
 );
 
 // Admin: Create assessment

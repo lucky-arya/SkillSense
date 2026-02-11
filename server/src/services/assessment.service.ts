@@ -48,6 +48,7 @@ class AssessmentService {
     const [assessments, total] = await Promise.all([
       Assessment.find(query)
         .select('-questions.correctAnswer') // Don't expose answers
+        .populate('targetSkills', 'name')
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 }),
@@ -64,7 +65,8 @@ class AssessmentService {
 
   async getAssessmentById(assessmentId: string): Promise<IAssessment> {
     const assessment = await Assessment.findById(assessmentId)
-      .select('-questions.correctAnswer -questions.explanation');
+      .select('-questions.correctAnswer -questions.explanation')
+      .populate('targetSkills', 'name');
 
     if (!assessment) {
       throw new AppError(

@@ -29,8 +29,8 @@ interface Config {
   // CORS
   corsOrigin: string;
 
-  // AI Service (Gemini)
-  geminiApiKey: string;
+  // AI Service (Groq)
+  groqApiKey: string;
   
   // Rate Limiting
   rateLimitWindowMs: number;
@@ -70,7 +70,7 @@ export const config: Config = {
   
   corsOrigin: getEnvVar('CORS_ORIGIN', 'http://localhost:5173'),
 
-  geminiApiKey: getEnvVar('GEMINI_API_KEY', ''),
+  groqApiKey: getEnvVar('GROQ_API_KEY', ''),
   
   rateLimitWindowMs: getEnvVarAsInt('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000),
   rateLimitMaxRequests: getEnvVarAsInt('RATE_LIMIT_MAX_REQUESTS', 100),
