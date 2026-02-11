@@ -250,7 +250,10 @@ export async function generateInterviewQuestions(
     temperature: 0.6,
     cacheKey,
   });
-  return extractJSON<InterviewQuestion[]>(text);
+  const parsed = extractJSON<any>(text);
+  // Groq JSON mode may wrap array in an object like { questions: [...] }
+  const questions: InterviewQuestion[] = Array.isArray(parsed) ? parsed : (parsed.questions || parsed.data || []);
+  return questions;
 }
 
 export async function evaluateInterviewAnswer(
