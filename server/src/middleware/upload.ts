@@ -14,7 +14,7 @@ const storage = multer.memoryStorage();
 
 // File filter for allowed types
 const fileFilter = (
-  req: Express.Request,
+  req: Request,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
 ) => {
