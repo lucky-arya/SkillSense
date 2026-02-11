@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   CheckCircle,
 } from 'lucide-react';
-import { Card, Button, ProgressBar, Badge } from '../components/ui';
+import { Card, Button, ProgressBar, Badge, Alert } from '../components/ui';
 import { gapAnalysisService, GapAnalysisResult, SkillGap } from '../services/api/gapAnalysis.service';
 import { assessmentService } from '../services/api/assessment.service';
 import {
@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [analysis, setAnalysis] = useState<GapAnalysisResult | null>(null);
   const [assessmentCount, setAssessmentCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -44,6 +45,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      setError('Some dashboard data couldn\'t be loaded. Please refresh to try again.');
     } finally {
       setIsLoading(false);
     }
@@ -99,6 +101,10 @@ export default function Dashboard() {
           </Button>
         </Link>
       </div>
+
+      {error && (
+        <Alert type="error" message={error} dismissible onDismiss={() => setError('')} />
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

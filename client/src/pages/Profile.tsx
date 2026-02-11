@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Card, Button, Input, Badge, ProgressBar } from '../components/ui';
+import { Card, Button, Input, Badge, ProgressBar, Alert } from '../components/ui';
 import { Target, Calendar, Edit2, Save, X } from 'lucide-react';
 import { skillService } from '../services/api/skill.service';
 import { assessmentService } from '../services/api/assessment.service';
@@ -13,6 +13,7 @@ export default function Profile() {
   const [skills, setSkills] = useState<{ name: string; level: number; category: string }[]>([]);
   const [assessmentCount, setAssessmentCount] = useState(0);
   const [_isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadProfileData();
@@ -37,6 +38,7 @@ export default function Profile() {
       }
     } catch (error) {
       console.error('Failed to load profile data:', error);
+      setError('Unable to load your profile data. Please try refreshing the page.');
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +66,10 @@ export default function Profile() {
         <h1 className="text-2xl font-bold text-gray-100">Profile</h1>
         <p className="text-gray-400 mt-1">Manage your account and view your progress</p>
       </div>
+
+      {error && (
+        <Alert type="error" message={error} dismissible onDismiss={() => setError('')} />
+      )}
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Profile Card */}

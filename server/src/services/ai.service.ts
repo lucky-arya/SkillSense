@@ -376,6 +376,80 @@ export async function extractSkillsFromResume(
   return extractJSON<{ skills: Array<{ name: string; level: string; category: string }> }>(text);
 }
 
+// ==========================================
+// AI Assessment Generation
+// ==========================================
+export async function generatePersonalizedAssessment(params: {
+  targetRole: string;
+  experienceLevel: string;
+  currentSkills: string[];
+  focusAreas: string[];
+}): Promise<{
+  title: string;
+  description: string;
+  questions: Array<{
+    id: string;
+    text: string;
+    type: 'multiple_choice' | 'self_rating' | 'scenario_based';
+    options?: Array<{ id: string; text: string; isCorrect: boolean }>;
+    skillArea: string;
+    difficulty: string;
+  }>;
+}> {
+  const text = await generate({
+    model: SMART_MODEL,
+    system: `You are an expert skill assessment designer. You create personalized, adaptive assessments to accurately evaluate a candidate's skill level. Design questions that range from foundational to advanced based on experience level. Respond with ONLY valid JSON.`,
+    user: `Create a personalized skill assessment for:
+- Target Role: ${params.targetRole}
+- Experience Level: ${params.experienceLevel}
+- Current Skills: ${params.currentSkills.join(', ') || 'Not specified'}
+- Focus Areas: ${params.focusAreas.join(', ') || 'General'}
+
+Generate exactly 10 questions with a mix of:
+- 6 multiple_choice questions (test practical knowledge relevant to the role)
+- 2 scenario_based questions (test real-world problem solving with options)
+- 2 self_rating questions (self-assessment of specific skills)
+
+For ${params.experienceLevel} level, calibrate difficulty:
+- Beginner: fundamentals + basic concepts
+- Junior: applied knowledge + common patterns  
+- Mid-Level: design decisions + optimization + best practices
+- Senior: architecture + trade-offs + leadership scenarios
+
+Return JSON:
+{
+  "title": "Personalized [Role] Assessment",
+  "description": "Brief description of what this assessment evaluates",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Question text?",
+      "type": "multiple_choice",
+      "options": [
+        {"id": "a", "text": "Option A", "isCorrect": false},
+        {"id": "b", "text": "Option B", "isCorrect": true},
+        {"id": "c", "text": "Option C", "isCorrect": false},
+        {"id": "d", "text": "Option D", "isCorrect": false}
+      ],
+      "skillArea": "React",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "q7",
+      "text": "Rate your proficiency with [specific skill]",
+      "type": "self_rating",
+      "skillArea": "TypeScript",
+      "difficulty": "self-assess"
+    }
+  ]
+}`,
+    jsonMode: true,
+    maxTokens: 3000,
+    temperature: 0.4,
+  });
+  return extractJSON<any>(text);
+}
+
 export const aiService = {
   analyzeResume,
   roastResume,
@@ -385,4 +459,5 @@ export const aiService = {
   generateCareerRoadmap,
   chatWithAI,
   extractSkillsFromResume,
+  generatePersonalizedAssessment,
 };

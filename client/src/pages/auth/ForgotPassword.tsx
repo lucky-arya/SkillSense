@@ -19,7 +19,7 @@ export default function ForgotPassword() {
       await new Promise(r => setTimeout(r, 1000));
       setSubmitted(true);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+      setError(err.response?.data?.message || 'Unable to send reset link. Please check your email and try again.');
     } finally {
       setIsLoading(false);
     }

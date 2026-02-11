@@ -62,7 +62,7 @@ export default function ResumeAnalyzer() {
       setActiveTab('rank');
       setMode('done');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Analysis failed. Check your API key.');
+      setError(err.response?.data?.error?.message || 'Resume analysis failed. The AI service may be temporarily unavailable — please try again shortly.');
       setMode('idle');
     }
   };
@@ -80,7 +80,7 @@ export default function ResumeAnalyzer() {
       setActiveTab('roast');
       setMode('done');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Roast failed. Check your API key.');
+      setError(err.response?.data?.error?.message || 'Resume roast failed. The AI service may be temporarily unavailable — please try again shortly.');
       setMode('idle');
     }
   };

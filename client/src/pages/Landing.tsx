@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowRight, Brain, Target, TrendingUp, Sparkles, FileText, Mic,
-  Map, Bot, Shield, Zap, Code2, BarChart3, Users, Star, ChevronRight
+  Map, Bot, Shield, Zap, Code2, BarChart3, Users, Star, ChevronRight,
+  Flame, Youtube, ExternalLink
 } from 'lucide-react';
 import { Button } from '../components/ui';
 
@@ -71,9 +72,29 @@ const techStack = [
 
 const stats = [
   { value: '6+', label: 'AI Features' },
-  { value: 'Gemini', label: 'Powered By' },
+  { value: 'Groq AI', label: 'Powered By' },
   { value: '3', label: 'Microservices' },
   { value: '∞', label: 'Possibilities' },
+];
+
+const trendingSkills = [
+  { name: 'AI / Prompt Engineering', growth: '+320%', hot: true },
+  { name: 'Agentic AI', growth: '+400%', hot: true },
+  { name: 'LLM Fine-Tuning', growth: '+280%', hot: true },
+  { name: 'Rust', growth: '+145%', hot: true },
+  { name: 'System Design', growth: '+120%', hot: true },
+  { name: 'Cybersecurity', growth: '+110%', hot: true },
+  { name: 'MLOps', growth: '+160%', hot: true },
+  { name: 'Kubernetes & Cloud Native', growth: '+95%', hot: false },
+];
+
+const topCourses = [
+  { title: 'CS50: Introduction to Computer Science', channel: 'Harvard / freeCodeCamp', url: 'https://www.youtube.com/watch?v=8mAITcNt710', level: 'Beginner' },
+  { title: 'Full Stack Web Development Bootcamp', channel: 'freeCodeCamp', url: 'https://www.youtube.com/watch?v=nu_pCVPKzTk', level: 'Beginner' },
+  { title: 'React Full Course 2025', channel: 'Bro Code', url: 'https://www.youtube.com/watch?v=CgkZ7MvWUAA', level: 'Intermediate' },
+  { title: 'Machine Learning with Python', channel: 'freeCodeCamp', url: 'https://www.youtube.com/watch?v=i_LwzRVP7bg', level: 'Intermediate' },
+  { title: 'Docker & Kubernetes Full Course', channel: 'TechWorld with Nana', url: 'https://www.youtube.com/watch?v=pg19Z8LL06w', level: 'Intermediate' },
+  { title: 'System Design for Beginners', channel: 'NeetCode', url: 'https://www.youtube.com/watch?v=F2FmTdLtb_4', level: 'Intermediate' },
 ];
 
 export default function Landing() {
@@ -129,7 +150,7 @@ export default function Landing() {
 
             <motion.p variants={fadeIn} className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto mb-10">
               SkillSense analyzes your skills, scores your resume, conducts mock interviews,
-              and builds personalized career roadmaps — all powered by Google Gemini AI.
+              and builds personalized career roadmaps — all powered by Groq AI.
             </motion.p>
 
             <motion.div variants={fadeIn} className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -261,6 +282,75 @@ export default function Landing() {
                 </motion.div>
               ))}
             </motion.div>
+          </div>
+        </section>
+
+        {/* Explore: Trending Skills & Free Courses */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 text-orange-300 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+                <Flame size={14} /> Trending in 2026
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Stay Ahead with
+                <span className="bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent"> In-Demand Skills</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Discover what's hot in the tech industry and start learning for free today.
+              </p>
+            </motion.div>
+
+            {/* Trending Skills Grid */}
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-16">
+              {trendingSkills.map((skill) => (
+                <motion.div key={skill.name} variants={fadeIn}
+                  className="group bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 hover:border-orange-500/30 transition-all">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-green-400 text-xs font-bold">{skill.growth}</span>
+                    {skill.hot && <Flame size={14} className="text-orange-400" />}
+                  </div>
+                  <p className="text-sm font-medium text-gray-200">{skill.name}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Free Courses */}
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-2">Free Courses to Get Started</h3>
+              <p className="text-gray-400 text-sm">Top-rated YouTube courses — completely free, no strings attached</p>
+            </motion.div>
+
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              {topCourses.map((course) => (
+                <motion.a key={course.title} variants={fadeIn} href={course.url} target="_blank" rel="noopener noreferrer"
+                  className="group bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-red-500/30 transition-all block">
+                  <div className="flex items-start justify-between mb-3">
+                    <Youtube size={20} className="text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      course.level === 'Beginner' ? 'bg-green-500/20 text-green-300' : 'bg-blue-500/20 text-blue-300'
+                    }`}>
+                      {course.level}
+                    </span>
+                  </div>
+                  <h4 className="font-medium text-gray-200 text-sm mb-1 group-hover:text-white transition-colors">{course.title}</h4>
+                  <p className="text-xs text-gray-500">{course.channel}</p>
+                  <div className="mt-3 flex items-center gap-1 text-xs text-gray-500 group-hover:text-red-400 transition-colors">
+                    <ExternalLink size={12} /> Watch Free
+                  </div>
+                </motion.a>
+              ))}
+            </motion.div>
+
+            <div className="text-center">
+              <Link to="/register">
+                <button className="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all">
+                  Sign up to explore more courses, podcasts & career tips <ArrowRight size={14} className="inline ml-1" />
+                </button>
+              </Link>
+            </div>
           </div>
         </section>
 

@@ -131,4 +131,26 @@ export const aiService = {
     const response = await apiClient.post('/ai/chat', params, { timeout: 30000 });
     return response.data;
   },
+
+  // AI Assessment Generation
+  generateAssessment: async (params: {
+    targetRole: string;
+    experienceLevel: string;
+    currentSkills: string[];
+    focusAreas: string[];
+  }): Promise<{
+    title: string;
+    description: string;
+    questions: Array<{
+      id: string;
+      text: string;
+      type: 'multiple_choice' | 'self_rating' | 'scenario_based';
+      options?: Array<{ id: string; text: string; isCorrect: boolean }>;
+      skillArea: string;
+      difficulty: string;
+    }>;
+  }> => {
+    const response = await apiClient.post('/ai/assessment/generate', params, { timeout: 60000 });
+    return response.data;
+  },
 };

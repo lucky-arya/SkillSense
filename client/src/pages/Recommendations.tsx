@@ -10,8 +10,10 @@ import {
   CheckCircle,
   ChevronDown,
   ChevronUp,
+  Brain,
+  Target,
 } from 'lucide-react';
-import { Card, Button, Badge, ProgressBar } from '../components/ui';
+import { Card, Button, Badge, ProgressBar, Alert } from '../components/ui';
 import { recommendationService, SkillRecommendation } from '../services/api/recommendation.service';
 
 interface SkillRec extends Omit<SkillRecommendation, 'reason'> {
@@ -19,14 +21,30 @@ interface SkillRec extends Omit<SkillRecommendation, 'reason'> {
   reason?: string;
 }
 
+interface AIAssessmentResults {
+  targetRole: string;
+  experienceLevel: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  scorePercentage: number;
+  skillBreakdown: { skill: string; correct: number; total: number; percentage: number }[];
+  completedAt: string;
+}
+
 export default function Recommendations() {
   const [expandedSkill, setExpandedSkill] = useState<string | null>(null);
   const [completedResources, setCompletedResources] = useState<Set<string>>(new Set());
   const [recommendations, setRecommendations] = useState<SkillRec[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [aiResults, setAiResults] = useState<AIAssessmentResults | null>(null);
 
   useEffect(() => {
     loadRecommendations();
+    try {
+      const stored = localStorage.getItem('ai-assessment-results');
+      if (stored) setAiResults(JSON.parse(stored));
+    } catch { /* ignore */ }
   }, []);
 
   const loadRecommendations = async () => {
@@ -56,6 +74,7 @@ export default function Recommendations() {
       }
     } catch (error) {
       console.error('Failed to load recommendations:', error);
+      setError('Unable to load recommendations. Please complete a gap analysis first, or try refreshing.');
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +133,10 @@ export default function Recommendations() {
         </p>
       </div>
 
+      {error && (
+        <Alert type="error" message={error} dismissible onDismiss={() => setError('')} />
+      )}
+
       {/* Progress Overview */}
       <Card className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
         <div className="flex items-center justify-between">
@@ -135,6 +158,48 @@ export default function Recommendations() {
           />
         </div>
       </Card>
+
+      {/* AI Assessment-Based Recommendations */}
+      {aiResults && (
+        <Card className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border-purple-500/30">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+              <Brain size={22} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-100">AI Assessment Insights</h3>
+              <p className="text-sm text-gray-400">{aiResults.targetRole} • Score: {aiResults.scorePercentage}%</p>
+            </div>
+          </div>
+          <p className="text-sm text-gray-400 mb-3">Based on your AI assessment, focus on these areas:</p>
+          <div className="space-y-2">
+            {aiResults.skillBreakdown
+              .filter(s => s.percentage < 80)
+              .sort((a, b) => a.percentage - b.percentage)
+              .map((s) => (
+                <div key={s.skill} className="flex items-center justify-between bg-slate-800/50 rounded-lg px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <Target size={14} className={s.percentage < 40 ? 'text-red-400' : s.percentage < 60 ? 'text-yellow-400' : 'text-blue-400'} />
+                    <span className="text-sm font-medium text-gray-300">{s.skill}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${
+                        s.percentage < 40 ? 'bg-red-500' : s.percentage < 60 ? 'bg-yellow-500' : 'bg-blue-500'
+                      }`} style={{ width: `${s.percentage}%` }} />
+                    </div>
+                    <Badge variant={s.percentage < 40 ? 'danger' : s.percentage < 60 ? 'warning' : 'default'} size="sm">
+                      {s.percentage < 40 ? 'Critical' : s.percentage < 60 ? 'Improve' : 'Good'}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            {aiResults.skillBreakdown.filter(s => s.percentage < 80).length === 0 && (
+              <p className="text-sm text-green-400 text-center py-2">Great job! You scored well across all assessed skills.</p>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Recommendations List */}
       <div className="space-y-4">

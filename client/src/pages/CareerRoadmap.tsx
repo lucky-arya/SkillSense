@@ -37,7 +37,7 @@ export default function CareerRoadmap() {
       setRoadmap(result);
       setExpandedPhase(0);
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Failed to generate roadmap');
+      setError(err.response?.data?.error?.message || 'Unable to generate your roadmap. The AI service may be busy — please try again shortly.');
     } finally {
       setIsLoading(false);
     }

@@ -97,7 +97,7 @@ export default function MockInterview() {
       speakText(firstQ.question);
       setStage('interview');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Failed to start interview');
+      setError(err.response?.data?.error?.message || 'Unable to start the interview. The AI service may be busy — please try again in a moment.');
     } finally {
       setIsProcessing(false);
     }
@@ -152,7 +152,7 @@ export default function MockInterview() {
         setCurrentQIndex(nextIdx);
       }
     } catch (err: any) {
-      setError('Something went wrong. Please try again.');
+      setError('Failed to process your answer. Please try sending it again.');
     } finally {
       setIsProcessing(false);
     }
@@ -172,7 +172,7 @@ export default function MockInterview() {
       setEvaluation(evalResult);
       setStage('results');
     } catch {
-      setError('Failed to evaluate interview');
+      setError('Unable to generate your evaluation. Please try ending the interview again.');
       setStage('interview');
     }
   };

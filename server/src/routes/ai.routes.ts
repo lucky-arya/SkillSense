@@ -30,4 +30,7 @@ router.post('/roadmap/generate', aiController.generateRoadmap);
 // AI Chat
 router.post('/chat', aiController.chat);
 
+// AI Assessment Generation
+router.post('/assessment/generate', aiController.generateAssessment);
+
 export default router;

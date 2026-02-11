@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, TrendingUp, Target, ChevronRight } from 'lucide-react';
-import { Card, Button, ProgressBar, Badge } from '../components/ui';
+import { AlertTriangle, TrendingUp, Target, ChevronRight, Brain, Sparkles, Award } from 'lucide-react';
+import { Card, Button, ProgressBar, Badge, Alert } from '../components/ui';
 import { gapAnalysisService, SkillGap, GapAnalysisResult } from '../services/api/gapAnalysis.service';
 import { roleService, Role } from '../services/api/role.service';
 import {
@@ -14,6 +14,17 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+interface AIAssessmentResults {
+  targetRole: string;
+  experienceLevel: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  scorePercentage: number;
+  skillBreakdown: { skill: string; correct: number; total: number; percentage: number }[];
+  completedAt: string;
+  questionDetails: { question: string; skill: string; userAnswer: string; correctAnswer: string; isCorrect: boolean }[];
+}
+
 export default function GapAnalysis() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -21,9 +32,16 @@ export default function GapAnalysis() {
   const [roles, setRoles] = useState<(Role & { match?: number })[]>([]);
   const [gaps, setGaps] = useState<(SkillGap & { category: string })[]>([]);
   const [analysis, setAnalysis] = useState<GapAnalysisResult | null>(null);
+  const [error, setError] = useState('');
+  const [aiResults, setAiResults] = useState<AIAssessmentResults | null>(null);
 
   useEffect(() => {
     loadInitialData();
+    // Load AI assessment results from localStorage
+    try {
+      const stored = localStorage.getItem('ai-assessment-results');
+      if (stored) setAiResults(JSON.parse(stored));
+    } catch { /* ignore */ }
   }, []);
 
   const loadInitialData = async () => {
@@ -50,6 +68,7 @@ export default function GapAnalysis() {
       }
     } catch (error) {
       console.error('Failed to load data:', error);
+      setError('Unable to load gap analysis data. Please refresh the page.');
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +92,7 @@ export default function GapAnalysis() {
       applyAnalysis(result);
     } catch (error) {
       console.error('Gap analysis failed:', error);
+      setError('Gap analysis failed for this role. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -84,10 +104,6 @@ export default function GapAnalysis() {
     required: gap.requiredLevel,
     gap: gap.gapSize,
   }));
-
-  useEffect(() => {
-    loadInitialData();
-  }, []);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -146,6 +162,58 @@ export default function GapAnalysis() {
           </Button>
         </Link>
       </div>
+
+      {error && (
+        <Alert type="error" message={error} dismissible onDismiss={() => setError('')} />
+      )}
+
+      {/* AI Assessment Results */}
+      {aiResults && (
+        <Card className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border-purple-500/30">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+              <Brain size={22} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-100 flex items-center gap-2">
+                AI Assessment Results
+                <Badge variant="primary">AI</Badge>
+              </h3>
+              <p className="text-sm text-gray-400">
+                {aiResults.targetRole} • {aiResults.experienceLevel} • Completed {new Date(aiResults.completedAt).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="ml-auto text-right">
+              <p className={`text-3xl font-bold ${
+                aiResults.scorePercentage >= 80 ? 'text-green-400' : aiResults.scorePercentage >= 60 ? 'text-blue-400' : aiResults.scorePercentage >= 40 ? 'text-yellow-400' : 'text-red-400'
+              }`}>{aiResults.scorePercentage}%</p>
+              <p className="text-xs text-gray-500">{aiResults.correctAnswers}/{aiResults.totalQuestions} correct</p>
+            </div>
+          </div>
+
+          {/* AI Skill Breakdown as Gaps */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {aiResults.skillBreakdown.map((s) => {
+              const level = s.percentage;
+              const priority = level >= 80 ? 'Strong' : level >= 60 ? 'Moderate' : level >= 40 ? 'Needs Work' : 'Critical Gap';
+              const color = level >= 80 ? 'text-green-400' : level >= 60 ? 'text-blue-400' : level >= 40 ? 'text-yellow-400' : 'text-red-400';
+              const barColor = level >= 80 ? 'bg-green-500' : level >= 60 ? 'bg-blue-500' : level >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+              return (
+                <div key={s.skill} className="bg-slate-800/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-300">{s.skill}</span>
+                    <span className={`text-xs font-medium ${color}`}>{priority}</span>
+                  </div>
+                  <div className="relative h-2 bg-slate-700 rounded-full overflow-hidden mb-1">
+                    <div className={`h-full rounded-full ${barColor}`} style={{ width: `${level}%` }} />
+                  </div>
+                  <p className="text-xs text-gray-500">{s.correct}/{s.total} correct ({level}%)</p>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Role Selection */}
       <Card>

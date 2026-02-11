@@ -297,3 +297,41 @@ export const extractSkills = async (
     next(error);
   }
 };
+
+// ==========================================
+// AI Assessment Generation
+// ==========================================
+export const generateAssessment = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { targetRole, experienceLevel, currentSkills, focusAreas } = req.body;
+
+    if (!targetRole) {
+      throw new AppError('Target role is required', 400, 'MISSING_TARGET_ROLE');
+    }
+
+    if (!experienceLevel) {
+      throw new AppError('Experience level is required', 400, 'MISSING_EXPERIENCE_LEVEL');
+    }
+
+    const assessment = await aiService.generatePersonalizedAssessment({
+      targetRole,
+      experienceLevel: experienceLevel || 'Junior',
+      currentSkills: currentSkills || [],
+      focusAreas: focusAreas || [],
+    });
+
+    const response: ApiResponse<typeof assessment> = {
+      success: true,
+      data: assessment,
+      meta: { timestamp: new Date() },
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};

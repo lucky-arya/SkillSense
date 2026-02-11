@@ -33,7 +33,14 @@ export default function Register() {
       await register(name, email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      const serverMsg = err.response?.data?.error?.message || err.response?.data?.message;
+      if (serverMsg) {
+        setError(serverMsg);
+      } else if (err.request) {
+        setError('Unable to reach the server. Please check your internet connection.');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
