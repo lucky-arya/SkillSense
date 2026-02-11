@@ -28,10 +28,10 @@ export default function ProgressBar({
   const colorStyles = {
     primary: 'bg-primary-500',
     secondary: 'bg-secondary-500',
-    success: 'bg-success-500',
-    warning: 'bg-warning-500',
-    danger: 'bg-danger-500',
-    gradient: 'bg-gradient-to-r from-primary-500 to-secondary-500',
+    success: 'bg-emerald-500',
+    warning: 'bg-amber-500',
+    danger: 'bg-red-500',
+    gradient: 'bg-gradient-to-r from-primary-500 via-indigo-500 to-secondary-500',
   };
 
   return (
@@ -44,9 +44,9 @@ export default function ProgressBar({
           )}
         </div>
       )}
-      <div className={clsx('w-full bg-slate-700 rounded-full overflow-hidden', sizeStyles[size])}>
+      <div className={clsx('w-full bg-slate-700/50 rounded-full overflow-hidden', sizeStyles[size])}>
         <div
-          className={clsx('h-full rounded-full transition-all duration-500', colorStyles[color])}
+          className={clsx('h-full rounded-full transition-all duration-700 ease-out', colorStyles[color])}
           style={{ width: `${percentage}%` }}
         />
       </div>

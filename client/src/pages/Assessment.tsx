@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   CheckCircle, Clock, ArrowRight, ArrowLeft, Sparkles, Target,
-  Loader2, Brain, User, BookOpen, Zap, AlertCircle, XCircle,
+  Loader2, Brain, User, BookOpen, Zap, XCircle,
   Award, BarChart3, TrendingUp
 } from 'lucide-react';
 import { Card, Button, ProgressBar, Badge, Alert } from '../components/ui';

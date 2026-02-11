@@ -136,11 +136,11 @@ export default function Sidebar() {
 
       {/* Progress indicator */}
       <div className="mt-auto pt-4 border-t border-slate-800">
-        <div className="bg-gradient-to-br from-primary-900/50 to-secondary-900/50 rounded-xl border border-slate-700 p-4">
+        <div className="bg-gradient-to-br from-primary-900/50 to-secondary-900/50 rounded-xl border border-primary-500/20 p-4 shadow-lg shadow-primary-500/5">
           <h4 className="font-semibold text-gray-200 mb-2">Skill Progress</h4>
-          <div className="w-full bg-slate-700 rounded-full h-2 mb-2">
+          <div className="w-full bg-slate-700/50 rounded-full h-2.5 mb-2">
             <div
-              className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-primary-400 via-indigo-500 to-secondary-500 h-2.5 rounded-full transition-all duration-700 ease-out shadow-sm shadow-primary-500/50"
               style={{ width: `${progress}%` }}
             ></div>
           </div>

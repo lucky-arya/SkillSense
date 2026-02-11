@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Card, Button, Input, Badge, ProgressBar, Alert } from '../components/ui';
-import { Target, Calendar, Edit2, Save, X } from 'lucide-react';
+import { Target, Calendar, Edit2, Save, X, Brain, Award, TrendingUp, AlertTriangle } from 'lucide-react';
 import { skillService } from '../services/api/skill.service';
 import { assessmentService } from '../services/api/assessment.service';
+
+interface AIAssessmentResults {
+  targetRole: string;
+  experienceLevel: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  scorePercentage: number;
+  skillBreakdown: { skill: string; correct: number; total: number; percentage: number }[];
+  completedAt: string;
+}
 
 export default function Profile() {
   const { user } = useAuth();
@@ -14,9 +24,14 @@ export default function Profile() {
   const [assessmentCount, setAssessmentCount] = useState(0);
   const [_isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [aiResults, setAiResults] = useState<AIAssessmentResults | null>(null);
 
   useEffect(() => {
     loadProfileData();
+    try {
+      const stored = localStorage.getItem('ai-assessment-results');
+      if (stored) setAiResults(JSON.parse(stored));
+    } catch { /* ignore */ }
   }, []);
 
   const loadProfileData = async () => {
@@ -44,8 +59,21 @@ export default function Profile() {
     }
   };
 
-  const overallProgress = skills.length > 0
-    ? Math.round(skills.reduce((acc, s) => acc + s.level, 0) / skills.length)
+  // Merge API skills with AI assessment skills as fallback
+  const displaySkills = skills.length > 0
+    ? skills
+    : aiResults
+      ? aiResults.skillBreakdown.map(s => ({
+          name: s.skill,
+          level: s.percentage,
+          category: 'AI Assessed',
+        }))
+      : [];
+
+  const totalAssessments = assessmentCount + (aiResults ? 1 : 0);
+
+  const overallProgress = displaySkills.length > 0
+    ? Math.round(displaySkills.reduce((acc, s) => acc + s.level, 0) / displaySkills.length)
     : 0;
 
   const handleSave = async () => {
@@ -137,7 +165,7 @@ export default function Profile() {
 
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-secondary-500/20 rounded-lg flex items-center justify-center">
-                  <Calendar size={20} className="text-secondary-600" />
+                  <Calendar size={20} className="text-secondary-400" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Member Since</p>
@@ -152,35 +180,50 @@ export default function Profile() {
         <div className="lg:col-span-2 space-y-6">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="text-center">
-              <p className="text-3xl font-bold text-primary-600">
-                {assessmentCount}
-              </p>
-              <p className="text-sm text-gray-400">Assessments</p>
+            <Card className="bg-gradient-to-br from-blue-600/20 to-blue-700/10 border-blue-500/20">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mb-2">
+                  <Award size={20} className="text-blue-400" />
+                </div>
+                <p className="text-3xl font-bold text-gray-100">{totalAssessments}</p>
+                <p className="text-sm text-gray-400 mt-1">Assessments</p>
+              </div>
             </Card>
-            <Card className="text-center">
-              <p className="text-3xl font-bold text-secondary-600">
-                {skills.length}
-              </p>
-              <p className="text-sm text-gray-400">Skills Tracked</p>
+            <Card className="bg-gradient-to-br from-purple-600/20 to-purple-700/10 border-purple-500/20">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center mb-2">
+                  <Brain size={20} className="text-purple-400" />
+                </div>
+                <p className="text-3xl font-bold text-gray-100">{displaySkills.length}</p>
+                <p className="text-sm text-gray-400 mt-1">Skills Tracked</p>
+              </div>
             </Card>
-            <Card className="text-center">
-              <p className="text-3xl font-bold text-green-600">
-                {overallProgress}%
-              </p>
-              <p className="text-sm text-gray-400">Avg. Proficiency</p>
+            <Card className="bg-gradient-to-br from-emerald-600/20 to-emerald-700/10 border-emerald-500/20">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-2">
+                  <TrendingUp size={20} className="text-emerald-400" />
+                </div>
+                <p className="text-3xl font-bold text-gray-100">{overallProgress}%</p>
+                <p className="text-sm text-gray-400 mt-1">Avg. Proficiency</p>
+              </div>
             </Card>
-            <Card className="text-center">
-              <p className="text-3xl font-bold text-orange-600">{skills.filter(s => s.level < 50).length}</p>
-              <p className="text-sm text-gray-400">Skills to Improve</p>
+            <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/10 border-orange-500/20">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center mb-2">
+                  <AlertTriangle size={20} className="text-orange-400" />
+                </div>
+                <p className="text-3xl font-bold text-gray-100">{displaySkills.filter(s => s.level < 50).length}</p>
+                <p className="text-sm text-gray-400 mt-1">Skills to Improve</p>
+              </div>
             </Card>
           </div>
 
           {/* Skills Overview */}
           <Card>
             <h3 className="text-lg font-semibold text-gray-100 mb-4">Your Skills</h3>
+            {displaySkills.length > 0 ? (
             <div className="space-y-4">
-              {skills.map((skill) => {
+              {displaySkills.map((skill) => {
                 const badge = getLevelBadge(skill.level);
                 return (
                   <div key={skill.name}>
@@ -210,13 +253,19 @@ export default function Profile() {
                 );
               })}
             </div>
+            ) : (
+              <div className="text-center py-8">
+                <Brain size={40} className="mx-auto text-gray-600 mb-3" />
+                <p className="text-gray-400 text-sm">Take an AI Assessment to see your skills here</p>
+              </div>
+            )}
           </Card>
 
           {/* Recent Activity */}
           <Card>
             <h3 className="text-lg font-semibold text-gray-100 mb-4">Account Settings</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
                 <div>
                   <p className="font-medium text-gray-200">Email Notifications</p>
                   <p className="text-sm text-gray-400">
@@ -229,7 +278,7 @@ export default function Profile() {
                 </label>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
                 <div>
                   <p className="font-medium text-gray-200">Weekly Progress Reports</p>
                   <p className="text-sm text-gray-400">Get a summary of your weekly learning</p>
