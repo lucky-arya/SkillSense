@@ -6,7 +6,7 @@
 [![Stack](https://img.shields.io/badge/Express-4-000000?logo=express)]()
 [![Stack](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi)]()
 [![Stack](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb)]()
-[![AI](https://img.shields.io/badge/Google%20Gemini-AI-4285F4?logo=google)]()
+[![AI](https://img.shields.io/badge/Groq-AI-F55036?logo=data:image/svg+xml;base64,)]()
 [![Stack](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)]()
 
 ---
@@ -16,7 +16,7 @@
 | | SkillSense AI | Typical Resume Tools |
 |--|---|---|
 | **Architecture** | 3 microservices (Express + FastAPI + React) | Monolithic app |
-| **AI** | Google Gemini 2.0 Flash + custom ML engine | Single API calls |
+| **AI** | Groq LLaMA 3.3 70B + LLaMA 3.1 8B + custom ML engine | Single API calls |
 | **Resume Analysis** | ATS scoring + roast mode + keyword extraction | Basic review |
 | **Mock Interviews** | Voice-enabled AI interviews with TTS/STT | Text-only or none |
 | **Career Roadmap** | Personalized phased timeline with projects & resources | Generic advice |
@@ -52,10 +52,16 @@
 - Adapts to current skills and experience level
 
 ### 🤖 AI Career Coach (Chat)
-- Persistent conversation with Gemini AI
-- Markdown-rendered responses
+- Persistent conversation with Groq-powered LLaMA AI
+- Markdown-rendered responses with typing animation
 - Quick action buttons for common career queries
 - Context-aware career guidance
+
+### 🎯 AI-Powered Personalized Assessment *(NEW)*
+- Collects target role, experience level, current skills, and focus areas
+- AI generates 10 tailored questions (MCQ + scenario-based + self-rating)
+- Adaptive difficulty calibrated to experience level
+- Powered by LLaMA 3.3 70B via Groq
 
 ### 📈 Dashboard & Recommendations
 - Skill progress dashboard with Recharts visualizations
@@ -69,7 +75,7 @@
 ```
 ┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
 │   React 18 + TW   │────▶│  Express + TS     │────▶│  FastAPI (Python) │
-│   Vite + Framer   │◀────│  Gemini AI SDK    │◀────│  ML Engine        │
+│   Vite + Framer   │◀────│  Groq AI SDK      │◀────│  ML Engine        │
 │   Radix UI        │     │  Multer + PDF     │     │  5 Roles / 17 Cat │
 └───────────────────┘     └────────┬──────────┘     └───────────────────┘
      Port 5173                     │ Port 5000           Port 8000
@@ -85,7 +91,7 @@
 |-------|-------------|
 | **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Framer Motion, Radix UI, Recharts, React Markdown |
 | **Backend** | Node.js, Express 4, TypeScript, Mongoose, Zod validation, JWT auth, Multer, pdf-parse |
-| **AI Engine** | Google Gemini 2.0 Flash (`@google/generative-ai`), structured JSON prompting |
+| **AI Engine** | Groq (`groq-sdk`) — LLaMA 3.3 70B Versatile (analysis/roadmaps) + LLaMA 3.1 8B Instant (chat/quick), JSON mode, tiered model routing |
 | **ML Service** | Python 3, FastAPI, scikit-learn, weighted scoring + collaborative filtering |
 | **Database** | MongoDB 7 with Mongoose ODM |
 | **DevOps** | Docker, docker-compose, nginx reverse proxy, npm workspaces |
@@ -118,7 +124,7 @@ skillsense/
 │   │   ├── routes/                    # REST routes (auth, skills, ai, etc.)
 │   │   ├── controllers/               # Request handlers
 │   │   ├── services/
-│   │   │   ├── ai.service.ts          # Gemini AI wrapper (8 methods)
+│   │   │   ├── ai.service.ts          # Groq AI wrapper (9 methods, tiered models)
 │   │   │   └── gapAnalysis.service.ts # ML bridge + MongoDB persistence
 │   │   ├── middleware/
 │   │   │   ├── auth.ts                # JWT authentication
@@ -145,7 +151,7 @@ skillsense/
 - Node.js 18+
 - Python 3.10+
 - MongoDB (local or Atlas)
-- Google Gemini API Key ([get one free](https://aistudio.google.com/apikey))
+- Groq API Key ([get one free](https://console.groq.com/keys))
 
 ### Installation
 
@@ -156,7 +162,7 @@ cd SkillSense
 
 # 2. Configure environment
 cp .env.example .env
-# Edit .env — set MONGODB_URI, JWT_SECRET, GEMINI_API_KEY
+# Edit .env — set MONGODB_URI, JWT_SECRET, GROQ_API_KEY
 
 # 3. Install all dependencies (npm workspaces)
 npm install
@@ -174,7 +180,7 @@ npm run dev
 # Required
 MONGODB_URI=mongodb://localhost:27017/skillsense
 JWT_SECRET=your-secret-key
-GEMINI_API_KEY=your-gemini-api-key        # ← NEW: powers all AI features
+GROQ_API_KEY=your-groq-api-key            # Powers all AI features (LLaMA 3.3 70B + 3.1 8B)
 
 # Optional
 PORT=5000
@@ -195,8 +201,8 @@ cd ml-service && uvicorn app.main:app --reload --port 8000  # ML → :8000
 ## 🐳 Docker Deployment (One Command)
 
 ```bash
-# Set your Gemini API key
-export GEMINI_API_KEY=your-key-here
+# Set your Groq API key
+export GROQ_API_KEY=your-key-here
 
 # Launch everything
 docker compose up --build
@@ -229,6 +235,7 @@ docker compose up --build
 | POST | `/api/v1/ai/interview/evaluate` | Full interview evaluation |
 | POST | `/api/v1/ai/roadmap/generate` | Generate career roadmap |
 | POST | `/api/v1/ai/chat` | AI career coach chat |
+| POST | `/api/v1/ai/assessment/generate` | AI personalized assessment generation |
 
 ### Skills & Analysis
 | Method | Endpoint | Description |

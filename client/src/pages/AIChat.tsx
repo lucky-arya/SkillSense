@@ -59,7 +59,7 @@ export default function AIChat() {
       const errId = ++msgId;
       setMessages((prev) => [
         ...prev,
-        { id: errId, role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' },
+        { id: errId, role: 'assistant', content: 'Sorry, I wasn\'t able to respond right now. This could be a temporary issue — please try sending your message again.' },
       ]);
       setLatestAssistantId(errId);
     } finally {

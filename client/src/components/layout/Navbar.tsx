@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -6,6 +6,12 @@ import { useAuth } from '../../context/AuthContext';
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-slate-900 border-b border-slate-800 z-50">
@@ -29,7 +35,7 @@ export default function Navbar() {
               <User size={20} />
             </Link>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="p-2 text-gray-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
             >
               <LogOut size={20} />
@@ -109,6 +115,15 @@ export default function Navbar() {
               AI Chat
             </Link>
             <hr className="my-2 border-slate-700" />
+            <p className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Discover</p>
+            <Link
+              to="/explore"
+              className="px-4 py-2 text-gray-300 hover:bg-slate-800 rounded-lg"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Explore & Grow
+            </Link>
+            <hr className="my-2 border-slate-700" />
             <Link
               to="/profile"
               className="px-4 py-2 text-gray-300 hover:bg-slate-800 rounded-lg"
@@ -118,7 +133,7 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => {
-                logout();
+                handleLogout();
                 setIsMenuOpen(false);
               }}
               className="px-4 py-2 text-red-400 hover:bg-slate-800 rounded-lg text-left"

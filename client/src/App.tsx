@@ -14,6 +14,7 @@ import ResumeAnalyzer from './pages/ResumeAnalyzer';
 import MockInterview from './pages/MockInterview';
 import CareerRoadmap from './pages/CareerRoadmap';
 import AIChat from './pages/AIChat';
+import Explore from './pages/Explore';
 import NotFound from './pages/NotFound';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -163,6 +164,16 @@ export default function App() {
           <PrivateRoute>
             <Layout>
               <AIChat />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/explore"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <Explore />
             </Layout>
           </PrivateRoute>
         }

@@ -10,6 +10,7 @@ import {
   Mic,
   Map,
   Bot,
+  Flame,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { gapAnalysisService } from '../../services/api/gapAnalysis.service';
@@ -26,6 +27,10 @@ const aiNavItems = [
   { path: '/mock-interview', label: 'Mock Interview', icon: Mic },
   { path: '/career-roadmap', label: 'Career Roadmap', icon: Map },
   { path: '/ai-chat', label: 'AI Chat', icon: Bot },
+];
+
+const exploreNavItems = [
+  { path: '/explore', label: 'Explore & Grow', icon: Flame },
 ];
 
 const bottomNavItems = [
@@ -75,6 +80,29 @@ export default function Sidebar() {
                 'flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors',
                 {
                   'bg-indigo-600/20 text-indigo-400': isActive,
+                  'text-gray-400 hover:bg-slate-800 hover:text-gray-200': !isActive,
+                }
+              )
+            }
+          >
+            <Icon size={20} />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+
+        {/* Explore section */}
+        <div className="pt-4 pb-2">
+          <p className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Discover</p>
+        </div>
+        {exploreNavItems.map(({ path, label, icon: Icon }) => (
+          <NavLink
+            key={path}
+            to={path}
+            className={({ isActive }) =>
+              clsx(
+                'flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors',
+                {
+                  'bg-orange-600/20 text-orange-400': isActive,
                   'text-gray-400 hover:bg-slate-800 hover:text-gray-200': !isActive,
                 }
               )
