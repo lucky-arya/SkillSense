@@ -8,3 +8,4 @@ export { Role, IRole, IRoleSkillRequirement, ISalaryRange } from './role.model';
 export { SkillProfile, ISkillProfile, ISkillAssessment } from './skillProfile.model';
 export { Assessment, IAssessment, IAssessmentQuestion, IQuestionOption } from './assessment.model';
 export { AssessmentResult, IAssessmentResult, IAssessmentResponse } from './assessmentResult.model';
+export { GapAnalysisResult, IGapAnalysisResult, ISkillGap } from './gapAnalysisResult.model';

@@ -193,6 +193,17 @@ The skill gap analysis uses **explainable ML** over black-box models:
 
 ## 🚢 Deployment
 
+### Docker Compose (Recommended)
+
+```bash
+# Start all services (MongoDB, backend, ML service, frontend)
+docker compose up --build
+
+# Access the app at http://localhost
+# API at http://localhost:5000
+# ML service at http://localhost:8000
+```
+
 ### Frontend (Vercel)
 ```bash
 cd client
@@ -227,6 +238,15 @@ cd client && npm run lint
 
 # Lint backend
 cd server && npm run lint
+```
+
+### Testing
+```bash
+# Backend unit tests (Jest)
+cd server && npm test
+
+# ML service tests (pytest)
+cd ml-service && python -m pytest tests/ -v
 ```
 
 ## 📄 License

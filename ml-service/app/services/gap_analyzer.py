@@ -11,7 +11,10 @@ import numpy as np
 from app.config import settings
 
 
-# Mock role requirements - in production, this would come from DB
+# Role requirements dictionary keyed by lowercase role title
+# The backend sends a MongoDB ObjectId as target_role_id, but the skill profile
+# and role data come through as context.  We match by normalized title when an
+# ObjectId lookup fails.
 ROLE_REQUIREMENTS = {
     "frontend_developer": {
         "title": "Frontend Developer",
@@ -20,14 +23,59 @@ ROLE_REQUIREMENTS = {
             {"skillId": "react", "skillName": "React", "requiredLevel": 4, "importance": "must_have"},
             {"skillId": "typescript", "skillName": "TypeScript", "requiredLevel": 3, "importance": "good_to_have"},
             {"skillId": "git", "skillName": "Git", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "rest", "skillName": "REST APIs", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "communication", "skillName": "Communication", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "problemsolving", "skillName": "Problem Solving", "requiredLevel": 4, "importance": "must_have"},
         ]
     },
     "backend_developer": {
         "title": "Backend Developer",
         "skills": [
             {"skillId": "nodejs", "skillName": "Node.js", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "js", "skillName": "JavaScript", "requiredLevel": 4, "importance": "must_have"},
             {"skillId": "sql", "skillName": "SQL", "requiredLevel": 4, "importance": "must_have"},
             {"skillId": "rest", "skillName": "REST APIs", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "systemdesign", "skillName": "System Design", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "git", "skillName": "Git", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "problemsolving", "skillName": "Problem Solving", "requiredLevel": 4, "importance": "must_have"},
+        ]
+    },
+    "full_stack_developer": {
+        "title": "Full Stack Developer",
+        "skills": [
+            {"skillId": "js", "skillName": "JavaScript", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "react", "skillName": "React", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "nodejs", "skillName": "Node.js", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "typescript", "skillName": "TypeScript", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "sql", "skillName": "SQL", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "rest", "skillName": "REST APIs", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "git", "skillName": "Git", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "systemdesign", "skillName": "System Design", "requiredLevel": 3, "importance": "good_to_have"},
+        ]
+    },
+    "data_scientist": {
+        "title": "Data Scientist",
+        "skills": [
+            {"skillId": "python", "skillName": "Python", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "ml", "skillName": "Machine Learning", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "sql", "skillName": "SQL", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "ds", "skillName": "Data Structures", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "algo", "skillName": "Algorithms", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "communication", "skillName": "Communication", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "problemsolving", "skillName": "Problem Solving", "requiredLevel": 5, "importance": "must_have"},
+        ]
+    },
+    "software_engineer": {
+        "title": "Software Engineer",
+        "skills": [
+            {"skillId": "ds", "skillName": "Data Structures", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "algo", "skillName": "Algorithms", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "systemdesign", "skillName": "System Design", "requiredLevel": 4, "importance": "must_have"},
+            {"skillId": "git", "skillName": "Git", "requiredLevel": 3, "importance": "must_have"},
+            {"skillId": "problemsolving", "skillName": "Problem Solving", "requiredLevel": 5, "importance": "must_have"},
+            {"skillId": "communication", "skillName": "Communication", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "teamwork", "skillName": "Teamwork", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "agile", "skillName": "Agile Methodology", "requiredLevel": 3, "importance": "good_to_have"},
         ]
     },
     "default": {
@@ -35,9 +83,16 @@ ROLE_REQUIREMENTS = {
         "skills": [
             {"skillId": "ds", "skillName": "Data Structures", "requiredLevel": 4, "importance": "must_have"},
             {"skillId": "algo", "skillName": "Algorithms", "requiredLevel": 4, "importance": "must_have"},
-            {"skillId": "system", "skillName": "System Design", "requiredLevel": 3, "importance": "good_to_have"},
+            {"skillId": "systemdesign", "skillName": "System Design", "requiredLevel": 3, "importance": "good_to_have"},
         ]
     }
+}
+
+# Reverse lookup: normalized title -> key
+_TITLE_TO_KEY = {
+    v["title"].lower().replace(" ", "_"): k
+    for k, v in ROLE_REQUIREMENTS.items()
+    if k != "default"
 }
 
 
@@ -133,10 +188,25 @@ class GapAnalyzerService:
         """
         Get role skill requirements.
         
-        In production, this would fetch from database.
+        Lookup order:
+        1. Exact key match (e.g. "frontend_developer")
+        2. Normalized title match (e.g. "Frontend Developer" -> "frontend_developer")
+        3. Fallback to default
         """
-        # Try to find matching role, fall back to default
-        return ROLE_REQUIREMENTS.get(role_id, ROLE_REQUIREMENTS["default"])
+        # Exact key match
+        if role_id in ROLE_REQUIREMENTS:
+            return ROLE_REQUIREMENTS[role_id]
+        
+        # Try normalized title match
+        normalized = role_id.lower().replace(" ", "_").replace("-", "_")
+        if normalized in ROLE_REQUIREMENTS:
+            return ROLE_REQUIREMENTS[normalized]
+        
+        # Try reverse title lookup
+        if normalized in _TITLE_TO_KEY:
+            return ROLE_REQUIREMENTS[_TITLE_TO_KEY[normalized]]
+        
+        return ROLE_REQUIREMENTS["default"]
     
     def _calculate_priority(self, gap_size: int, importance: str) -> str:
         """

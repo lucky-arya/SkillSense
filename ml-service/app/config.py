@@ -4,12 +4,18 @@ SkillSense AI - ML Service Configuration
 
 import os
 from typing import List
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment"""
     
+    model_config = SettingsConfigDict(
+        env_file="../.env",
+        env_prefix="ML_",
+        extra="ignore",
+    )
+
     # Server
     environment: str = "development"
     port: int = 8000
@@ -28,10 +34,6 @@ class Settings(BaseSettings):
     
     # Learning time estimates (hours per level)
     hours_per_level: int = 20
-    
-    class Config:
-        env_file = "../.env"
-        env_prefix = "ML_"
 
 
 settings = Settings()

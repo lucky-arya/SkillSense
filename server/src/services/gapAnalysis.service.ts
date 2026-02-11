@@ -2,12 +2,14 @@
  * SkillSense AI - Gap Analysis Service
  * 
  * Core business logic for skill gap analysis
+ * Results are persisted to MongoDB via the GapAnalysisResult model
  */
 
 import mongoose from 'mongoose';
 import { SkillProfile, ISkillProfile } from '../models/skillProfile.model';
 import { Role, IRole } from '../models/role.model';
 import { User } from '../models/user.model';
+import { GapAnalysisResult } from '../models/gapAnalysisResult.model';
 import { AppError } from '../middleware/errorHandler';
 import { ERROR_CODES, GAP_THRESHOLDS, LEARNING_TIME_ESTIMATES } from '@skillsense/shared';
 import { mlServiceClient } from './mlService.client';
@@ -23,7 +25,7 @@ interface SkillGap {
   estimatedTimeToClose: number;
 }
 
-interface GapAnalysisResult {
+interface GapAnalysisData {
   id: string;
   userId: string;
   targetRole: {
@@ -49,11 +51,8 @@ interface LearningRecommendation {
   priority: number;
 }
 
-// In-memory storage for gap analysis results (in production, use a proper model)
-const gapAnalysisCache = new Map<string, GapAnalysisResult[]>();
-
 class GapAnalysisService {
-  async analyzeGaps(userId: string, targetRoleId: string): Promise<GapAnalysisResult> {
+  async analyzeGaps(userId: string, targetRoleId: string): Promise<GapAnalysisData> {
     // Get user's skill profile
     const skillProfile = await SkillProfile.findOne({ userId });
     
@@ -97,29 +96,14 @@ class GapAnalysisService {
       });
 
       if (mlResult) {
-        const result: GapAnalysisResult = {
-          id: new mongoose.Types.ObjectId().toString(),
-          userId,
-          targetRole: {
-            id: role._id.toString(),
-            title: role.title,
-          },
-          gaps: mlResult.gaps,
-          overallReadiness: mlResult.overallReadiness,
-          strengthAreas: mlResult.strengthAreas,
-          improvementAreas: mlResult.improvementAreas,
-          analyzedAt: new Date(),
-        };
-
-        // Cache the result
-        this.cacheResult(userId, result);
+        const saved = await this.persistResult(userId, role, mlResult);
 
         // Update user's target role
         await User.findByIdAndUpdate(userId, {
           'profile.targetRole': role.title,
         });
 
-        return result;
+        return saved;
       }
     } catch (error) {
       console.warn('ML service unavailable, using fallback gap analysis');
@@ -133,7 +117,7 @@ class GapAnalysisService {
     userId: string,
     skillProfile: ISkillProfile,
     role: IRole
-  ): Promise<GapAnalysisResult> {
+  ): Promise<GapAnalysisData> {
     const gaps: SkillGap[] = [];
     const strengthAreas: string[] = [];
     const improvementAreas: string[] = [];
@@ -193,43 +177,87 @@ class GapAnalysisService {
       ? Math.round((totalMet / totalRequired) * 100)
       : 0;
 
-    const result: GapAnalysisResult = {
-      id: new mongoose.Types.ObjectId().toString(),
-      userId,
-      targetRole: {
-        id: role._id.toString(),
-        title: role.title,
-      },
+    const mlStyleResult = {
       gaps,
       overallReadiness,
       strengthAreas: strengthAreas.slice(0, 5),
       improvementAreas: improvementAreas.slice(0, 5),
-      analyzedAt: new Date(),
     };
 
-    // Cache the result
-    this.cacheResult(userId, result);
+    const saved = await this.persistResult(userId, role, mlStyleResult);
 
     // Update user's target role
     await User.findByIdAndUpdate(userId, {
       'profile.targetRole': role.title,
     });
 
-    return result;
+    return saved;
   }
 
-  private cacheResult(userId: string, result: GapAnalysisResult): void {
-    const existing = gapAnalysisCache.get(userId) || [];
-    existing.unshift(result);
-    // Keep only last 10 analyses
-    gapAnalysisCache.set(userId, existing.slice(0, 10));
+  /**
+   * Persist a gap analysis result to MongoDB and return the formatted data.
+   */
+  private async persistResult(
+    userId: string,
+    role: IRole,
+    result: {
+      gaps: SkillGap[];
+      overallReadiness: number;
+      strengthAreas: string[];
+      improvementAreas: string[];
+    }
+  ): Promise<GapAnalysisData> {
+    const doc = await GapAnalysisResult.create({
+      userId: new mongoose.Types.ObjectId(userId),
+      targetRole: {
+        roleId: role._id,
+        title: role.title,
+      },
+      gaps: result.gaps,
+      overallReadiness: result.overallReadiness,
+      strengthAreas: result.strengthAreas,
+      improvementAreas: result.improvementAreas,
+      analyzedAt: new Date(),
+    });
+
+    return this.toGapAnalysisData(doc);
+  }
+
+  /**
+   * Map a Mongoose document to the plain GapAnalysisData interface.
+   */
+  private toGapAnalysisData(doc: any): GapAnalysisData {
+    return {
+      id: doc._id.toString(),
+      userId: doc.userId.toString(),
+      targetRole: {
+        id: doc.targetRole.roleId.toString(),
+        title: doc.targetRole.title,
+      },
+      gaps: doc.gaps.map((g: any) => ({
+        skillId: g.skillId,
+        skillName: g.skillName,
+        currentLevel: g.currentLevel,
+        requiredLevel: g.requiredLevel,
+        gapSize: g.gapSize,
+        priority: g.priority,
+        importance: g.importance,
+        estimatedTimeToClose: g.estimatedTimeToClose,
+      })),
+      overallReadiness: doc.overallReadiness,
+      strengthAreas: doc.strengthAreas,
+      improvementAreas: doc.improvementAreas,
+      analyzedAt: doc.analyzedAt,
+    };
   }
 
   async getRecommendations(userId: string): Promise<LearningRecommendation[]> {
-    // Get the latest gap analysis
-    const analyses = gapAnalysisCache.get(userId);
-    
-    if (!analyses || analyses.length === 0) {
+    // Get the latest gap analysis from MongoDB
+    const latestDoc = await GapAnalysisResult.findOne({ userId })
+      .sort({ analyzedAt: -1 })
+      .lean();
+
+    if (!latestDoc) {
       throw new AppError(
         'No gap analysis found. Please run a gap analysis first.',
         400,
@@ -237,13 +265,11 @@ class GapAnalysisService {
       );
     }
 
-    const latestAnalysis = analyses[0];
-
     // Try ML service for personalized recommendations
     try {
       const mlRecommendations = await mlServiceClient.getRecommendations({
         userId,
-        gaps: latestAnalysis.gaps,
+        gaps: latestDoc.gaps as SkillGap[],
       });
 
       if (mlRecommendations) {
@@ -254,7 +280,7 @@ class GapAnalysisService {
     }
 
     // Fallback: Generate basic recommendations
-    return this.generateBasicRecommendations(latestAnalysis.gaps);
+    return this.generateBasicRecommendations(latestDoc.gaps as SkillGap[]);
   }
 
   private generateBasicRecommendations(gaps: SkillGap[]): LearningRecommendation[] {
@@ -285,18 +311,25 @@ class GapAnalysisService {
     return names[level] || 'Advanced';
   }
 
-  async getGapAnalysisHistory(userId: string): Promise<GapAnalysisResult[]> {
-    return gapAnalysisCache.get(userId) || [];
+  async getGapAnalysisHistory(userId: string): Promise<GapAnalysisData[]> {
+    const docs = await GapAnalysisResult.find({ userId })
+      .sort({ analyzedAt: -1 })
+      .limit(10)
+      .lean();
+
+    return docs.map(doc => this.toGapAnalysisData(doc));
   }
 
   async getGapAnalysisById(
     userId: string,
     analysisId: string
-  ): Promise<GapAnalysisResult> {
-    const analyses = gapAnalysisCache.get(userId) || [];
-    const analysis = analyses.find(a => a.id === analysisId);
+  ): Promise<GapAnalysisData> {
+    const doc = await GapAnalysisResult.findOne({
+      _id: analysisId,
+      userId,
+    }).lean();
 
-    if (!analysis) {
+    if (!doc) {
       throw new AppError(
         'Gap analysis not found',
         404,
@@ -304,7 +337,7 @@ class GapAnalysisService {
       );
     }
 
-    return analysis;
+    return this.toGapAnalysisData(doc);
   }
 }
 

@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  # ── MongoDB ───────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: skillsense
+
+  # ── Backend API ───────────────────────────────────────────
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/skillsense
+      JWT_SECRET: ${JWT_SECRET:-skillsense-prod-jwt-secret}
+      JWT_EXPIRES_IN: 7d
+      ML_SERVICE_URL: http://ml-service:8000
+      CORS_ORIGIN: http://localhost
+
+  # ── ML Service ────────────────────────────────────────────
+  ml-service:
+    build:
+      context: ml-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      ML_ENVIRONMENT: production
+
+  # ── Frontend (nginx) ──────────────────────────────────────
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        VITE_API_URL: /api/v1
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+      - ml-service
+
+volumes:
+  mongo-data:

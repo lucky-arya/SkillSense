@@ -8,7 +8,7 @@ Uses content-based filtering with rule-based prioritization.
 from typing import List, Dict, Any
 
 
-# Learning resource catalog - in production, this would be in a database
+# Learning resource catalog covering all skills in the SkillSense platform
 LEARNING_RESOURCES = {
     "javascript": [
         {
@@ -53,6 +53,84 @@ LEARNING_RESOURCES = {
             "duration": 20,
             "level": "intermediate",
         },
+        {
+            "title": "React Patterns & Best Practices",
+            "type": "book",
+            "provider": "Packt",
+            "url": "https://packtpub.com/react-patterns",
+            "duration": 25,
+            "level": "advanced",
+        },
+    ],
+    "typescript": [
+        {
+            "title": "Understanding TypeScript",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/understanding-typescript",
+            "duration": 30,
+            "level": "beginner",
+        },
+        {
+            "title": "TypeScript Handbook",
+            "type": "documentation",
+            "provider": "Microsoft",
+            "url": "https://typescriptlang.org/docs/handbook",
+            "duration": 10,
+            "level": "intermediate",
+        },
+        {
+            "title": "Effective TypeScript",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://effectivetypescript.com",
+            "duration": 20,
+            "level": "advanced",
+        },
+    ],
+    "node.js": [
+        {
+            "title": "The Complete Node.js Developer Course",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/the-complete-nodejs-developer-course",
+            "duration": 35,
+            "level": "beginner",
+        },
+        {
+            "title": "Node.js Design Patterns",
+            "type": "book",
+            "provider": "Packt",
+            "url": "https://packtpub.com/nodejs-design-patterns",
+            "duration": 30,
+            "level": "advanced",
+        },
+        {
+            "title": "Build a REST API with Node & Express",
+            "type": "project",
+            "provider": "Traversy Media",
+            "url": "https://youtube.com/traversymedia-node-api",
+            "duration": 8,
+            "level": "intermediate",
+        },
+    ],
+    "nodejs": [  # alias
+        {
+            "title": "The Complete Node.js Developer Course",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/the-complete-nodejs-developer-course",
+            "duration": 35,
+            "level": "beginner",
+        },
+        {
+            "title": "Node.js Design Patterns",
+            "type": "book",
+            "provider": "Packt",
+            "url": "https://packtpub.com/nodejs-design-patterns",
+            "duration": 30,
+            "level": "advanced",
+        },
     ],
     "python": [
         {
@@ -70,6 +148,272 @@ LEARNING_RESOURCES = {
             "url": "https://automatetheboringstuff.com",
             "duration": 25,
             "level": "intermediate",
+        },
+        {
+            "title": "Python Data Science Handbook",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://jakevdp.github.io/PythonDataScienceHandbook",
+            "duration": 35,
+            "level": "advanced",
+        },
+    ],
+    "sql": [
+        {
+            "title": "The Complete SQL Bootcamp",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/the-complete-sql-bootcamp",
+            "duration": 20,
+            "level": "beginner",
+        },
+        {
+            "title": "SQL Practice Problems",
+            "type": "tutorial",
+            "provider": "LeetCode",
+            "url": "https://leetcode.com/study-plan/sql",
+            "duration": 15,
+            "level": "intermediate",
+        },
+        {
+            "title": "High Performance MySQL",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://oreilly.com/high-performance-mysql",
+            "duration": 30,
+            "level": "advanced",
+        },
+    ],
+    "git": [
+        {
+            "title": "Git Complete: The Definitive Guide",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/git-complete",
+            "duration": 10,
+            "level": "beginner",
+        },
+        {
+            "title": "Pro Git Book",
+            "type": "book",
+            "provider": "Git SCM",
+            "url": "https://git-scm.com/book",
+            "duration": 15,
+            "level": "intermediate",
+        },
+    ],
+    "restapis": [
+        {
+            "title": "REST API Design, Development & Management",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/rest-api",
+            "duration": 15,
+            "level": "beginner",
+        },
+        {
+            "title": "Build a RESTful API from Scratch",
+            "type": "project",
+            "provider": "FreeCodeCamp",
+            "url": "https://freecodecamp.org/rest-api-project",
+            "duration": 12,
+            "level": "intermediate",
+        },
+    ],
+    "datastructures": [
+        {
+            "title": "Data Structures & Algorithms - Complete Course",
+            "type": "course",
+            "provider": "Udemy",
+            "url": "https://udemy.com/data-structures-algorithms",
+            "duration": 45,
+            "level": "beginner",
+        },
+        {
+            "title": "NeetCode 150 - DSA Problem Set",
+            "type": "tutorial",
+            "provider": "NeetCode",
+            "url": "https://neetcode.io/practice",
+            "duration": 60,
+            "level": "intermediate",
+        },
+        {
+            "title": "Introduction to Algorithms (CLRS)",
+            "type": "book",
+            "provider": "MIT Press",
+            "url": "https://mitpress.mit.edu/algorithms",
+            "duration": 80,
+            "level": "advanced",
+        },
+    ],
+    "algorithms": [
+        {
+            "title": "Algorithms Specialization",
+            "type": "course",
+            "provider": "Coursera (Stanford)",
+            "url": "https://coursera.org/specializations/algorithms",
+            "duration": 60,
+            "level": "intermediate",
+        },
+        {
+            "title": "LeetCode Problem Practice",
+            "type": "tutorial",
+            "provider": "LeetCode",
+            "url": "https://leetcode.com/problemset",
+            "duration": 50,
+            "level": "intermediate",
+        },
+        {
+            "title": "Algorithm Design Manual",
+            "type": "book",
+            "provider": "Springer",
+            "url": "https://algorist.com",
+            "duration": 40,
+            "level": "advanced",
+        },
+    ],
+    "systemdesign": [
+        {
+            "title": "System Design Fundamentals",
+            "type": "course",
+            "provider": "Educative",
+            "url": "https://educative.io/courses/grokking-system-design",
+            "duration": 30,
+            "level": "intermediate",
+        },
+        {
+            "title": "System Design Primer",
+            "type": "tutorial",
+            "provider": "GitHub",
+            "url": "https://github.com/donnemartin/system-design-primer",
+            "duration": 40,
+            "level": "intermediate",
+        },
+        {
+            "title": "Designing Data-Intensive Applications",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://dataintensive.net",
+            "duration": 50,
+            "level": "advanced",
+        },
+    ],
+    "machinelearning": [
+        {
+            "title": "Machine Learning Specialization",
+            "type": "course",
+            "provider": "Coursera (Stanford)",
+            "url": "https://coursera.org/specializations/machine-learning",
+            "duration": 80,
+            "level": "beginner",
+        },
+        {
+            "title": "Hands-On Machine Learning with Scikit-Learn",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://oreilly.com/hands-on-ml",
+            "duration": 50,
+            "level": "intermediate",
+        },
+        {
+            "title": "Kaggle Competitions",
+            "type": "project",
+            "provider": "Kaggle",
+            "url": "https://kaggle.com/competitions",
+            "duration": 40,
+            "level": "advanced",
+        },
+    ],
+    "cloudcomputing": [
+        {
+            "title": "AWS Cloud Practitioner Essentials",
+            "type": "course",
+            "provider": "AWS",
+            "url": "https://explore.skillbuilder.aws/learn/course/cloud-practitioner",
+            "duration": 20,
+            "level": "beginner",
+        },
+        {
+            "title": "Cloud Architecture Patterns",
+            "type": "book",
+            "provider": "O'Reilly",
+            "url": "https://oreilly.com/cloud-architecture",
+            "duration": 25,
+            "level": "intermediate",
+        },
+    ],
+    "communication": [
+        {
+            "title": "Effective Communication for Tech Professionals",
+            "type": "course",
+            "provider": "LinkedIn Learning",
+            "url": "https://linkedin.com/learning/communication",
+            "duration": 8,
+            "level": "beginner",
+        },
+        {
+            "title": "Technical Writing for Engineers",
+            "type": "tutorial",
+            "provider": "Google",
+            "url": "https://developers.google.com/tech-writing",
+            "duration": 6,
+            "level": "intermediate",
+        },
+    ],
+    "problemsolving": [
+        {
+            "title": "Think Like a Programmer",
+            "type": "book",
+            "provider": "No Starch Press",
+            "url": "https://nostarch.com/thinklikeaprogrammer",
+            "duration": 20,
+            "level": "beginner",
+        },
+        {
+            "title": "Competitive Programming Practice",
+            "type": "tutorial",
+            "provider": "Codeforces",
+            "url": "https://codeforces.com/problemset",
+            "duration": 40,
+            "level": "intermediate",
+        },
+    ],
+    "teamwork": [
+        {
+            "title": "Teamwork & Collaboration in Tech",
+            "type": "course",
+            "provider": "LinkedIn Learning",
+            "url": "https://linkedin.com/learning/teamwork",
+            "duration": 6,
+            "level": "beginner",
+        },
+    ],
+    "timemanagement": [
+        {
+            "title": "Time Management for Developers",
+            "type": "course",
+            "provider": "Pluralsight",
+            "url": "https://pluralsight.com/time-management",
+            "duration": 5,
+            "level": "beginner",
+        },
+    ],
+    "agilemethodology": [
+        {
+            "title": "Agile with Atlassian Jira",
+            "type": "course",
+            "provider": "Coursera",
+            "url": "https://coursera.org/learn/agile-atlassian-jira",
+            "duration": 12,
+            "level": "beginner",
+        },
+        {
+            "title": "Scrum Guide",
+            "type": "documentation",
+            "provider": "Scrum.org",
+            "url": "https://scrumguides.org",
+            "duration": 3,
+            "level": "beginner",
         },
     ],
     "default": [
@@ -164,14 +508,19 @@ class RecommenderService:
         return recommendations[:10]
     
     def _get_resources_for_skill(self, skill_name: str) -> List[Dict]:
-        """Get learning resources for a skill"""
-        # Check exact match first
-        if skill_name in LEARNING_RESOURCES:
-            return LEARNING_RESOURCES[skill_name]
+        """Get learning resources for a skill, using flexible matching"""
+        # Normalize: lowercase, strip spaces/dots/hyphens
+        normalized = skill_name.lower().replace(" ", "").replace(".", "").replace("-", "")
         
-        # Check partial matches
+        # Exact match on normalized key
+        if normalized in LEARNING_RESOURCES:
+            return LEARNING_RESOURCES[normalized]
+        
+        # Check partial/substring matches both directions
         for key in LEARNING_RESOURCES:
-            if key in skill_name or skill_name in key:
+            if key == "default":
+                continue
+            if key in normalized or normalized in key:
                 return LEARNING_RESOURCES[key]
         
         # Fall back to default
